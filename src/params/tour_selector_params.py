@@ -1,4 +1,6 @@
 
 class TourSelectorParams:
     def __init__(self):
-        pass
+        # Params for SA
+        self.sa_cooling_rate = None
+

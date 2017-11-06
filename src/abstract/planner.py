@@ -8,7 +8,12 @@ class Planner(ABC):
     def __init__(self, input_ : PlanningInput, params : PlannerParams):
         self.input = input_
         self.params = params
+        self.tours = None
 
     @abstractmethod
-    def run(self, tours):
+    def run(self):
+        pass
+
+    @abstractmethod
+    def score(self, tours) -> float:
         pass

@@ -24,7 +24,7 @@ class Manager:
         self.tour_selector = init_struct.tour_selector_cls(init_struct.tour_selector_params, self.planner)
 
     def run(self):
-        self.tour_selector.run()
+        self.tour_selector.run_sa()
 
         # self.set_output()
 
