@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 
+from src.abstract.planning import Planning
 from src.input.planning_input import PlanningInput
 from src.params.planning_scorer_params import PlanningScorerParams
-from src.planning import Planning
 
 
 class PlanningScorer(ABC):

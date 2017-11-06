@@ -1,8 +1,3 @@
-from src.planner import Planner
-from src.planning_scorer import PlanningScorer
-from src.tour_selector import TourSelector
-
-
 class Manager:
 
     class InitStruct:
