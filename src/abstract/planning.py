@@ -8,7 +8,12 @@ class Planning:
             self.tours = [None for _ in range(tours_per_day)]
             """A list of tours done in a day (Planning.Tour)"""
 
+        def __len__(self):
+            return len(self.tours)
+
         def __getitem__(self, index):
+            if len(self) <= index:
+                self.tours += [None] * (index - len(self) + 1)
             return self.tours[index]
 
     class Tour:
@@ -23,8 +28,11 @@ class Planning:
         if days is None or tours_per_day is None:
             return
 
-        self.data = [Planning.Day(tours_per_day) for _ in range(days)]
+        self.days = [Planning.Day(tours_per_day) for _ in range(days)]
         """A list of plannings per day (Planning.Day)"""
 
+    def __len__(self):
+        return len(self.days)
+
     def __getitem__(self, index):
-        return self.data[index]
+        return self.days[index]

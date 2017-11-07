@@ -3,19 +3,20 @@ import random
 from src.abstract.greedy_solver import GreedySolver
 from src.abstract.planner import Planner
 from src.abstract.planning import Planning
+from src.abstract.planning_scorer import PlanningScorer
 from src.concrete.planning_manager import Manager
 from src.input.planning_input import PlanningInput
 from src.params.planner_params import PlannerParams
-from src.utils import weighted_choice
+from src.utils import weighted_choice, SECONDS_PER_HOUR, list_sub
 
 
 class GreedyPlanner(Planner, GreedySolver):
     KEEP_FACTOR = 0.3
-    COST_CORRECTION_BIAS  = 10000 # ??? random value...
-    MAX_TIME_PER_DAY = 8 * 60 * 60
+    COST_CORRECTION_BIAS  = 3 * SECONDS_PER_HOUR # ??? random value... 3 hours
+    MAX_TIME_PER_DAY = 8 * SECONDS_PER_HOUR # 8 hours
 
-    def __init__(self, manager: Manager, input_: PlanningInput, params: PlannerParams):
-        Planner.__init__(self, manager, input_, params)
+    def __init__(self, manager: Manager, input_: PlanningInput, params: PlannerParams, scorer : PlanningScorer):
+        Planner.__init__(self, manager, input_, params, scorer)
         GreedySolver.__init__(self)
 
         self.get_dist = lambda s, d: self.manager.compute_distance(s, d)
@@ -37,6 +38,8 @@ class GreedyPlanner(Planner, GreedySolver):
 
         self.greedy_run()
 
+        return self.scorer.compute_cost(self.current_plan)
+
     def _apply_best_option(self):
         choices = [(tour, self._compute_option_cost(tour)) for tour in self.tours]
         choices.sort(key = lambda t: t[1])
@@ -51,26 +54,26 @@ class GreedyPlanner(Planner, GreedySolver):
         self._apply_choice(choice)
 
     def _apply_choice(self, choice):
-        visits_per_node = self._compute_visits_per_node(choice)
+        dist_on_road = self.manager.compute_tour_distance(choice)
+        visits_per_node = self._compute_visits_per_node(choice, dist_on_road)
 
-        self._substract_visits(self.remaining_visits, visits_per_node)
+        for i, cnt in enumerate(visits_per_node):
+            self.remaining_visits[choice[i]] -= cnt
+
         self.current_plan[self.day][self.car] = Planning.Tour(choice, visits_per_node)
 
         self._next()
 
     def _next(self):
-        if self.car >= self.input.cnt_cars:
-            self.day += 1
-            self.car = 0
-        else:
+        if self.day >= self.input.cnt_days:
+            self.day = 0
             self.car += 1
+        else:
+            self.day += 1
 
     def _done(self):
-        return self.day >= self.input.cnt_days
-
-    def _substract_visits(self, initial_visits, visits_per_node):
-        # Edit the list in-place
-        initial_visits[:] = [r - v for r, v in zip(initial_visits, visits_per_node)]
+        return all(x == 0 for x in self.remaining_visits)
+        # return self.day >= self.input.cnt_days
 
     def _compute_option_cost(self, tour):
         visit_duration = self.input.consult_time
@@ -98,7 +101,7 @@ class GreedyPlanner(Planner, GreedySolver):
                 break
 
             if self.remaining_visits[i] > 0:
-                visits[i] += min(self.remaining_visits[i], remaining_time // self.input.consult_time)
+                visits[i] += min(self.remaining_visits[tour[i]], remaining_time // self.input.consult_time)
                 remaining_time -= self.input.consult_time * visits[i]
 
         return visits
