@@ -1,9 +1,10 @@
-from datetime import datetime
 import time
-import googlemaps
+from datetime import datetime
 
+import googlemaps
 from Config import Config
-from Singleton import Singleton
+
+from old.Singleton import Singleton
 
 
 class MapsApi(metaclass=Singleton):

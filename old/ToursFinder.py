@@ -1,7 +1,3 @@
-import random
-
-from MapsUrl import MapsUrl
-from NatalityDataReader import NatalityDataReader
 from mtsp_solvers.SA_MTSP_Solver import SA_MTSP_Solver
 
 
@@ -18,7 +14,7 @@ class ToursFinder:
             lines = [" ".join(line.split()[1:]) for line in lines]
             villages = lines
 
-        hours_on_road_limit = 9
+        hours_on_road_limit = 8
         tour_limit = 60 * 60 * hours_on_road_limit
 
         solver = SA_MTSP_Solver(100000, cooling_rate)
@@ -35,26 +31,31 @@ class ToursFinder:
             if len(invalids) > 0:
                 print('Invalid solution!', invalids)
 
+            tours = list(filter(lambda t: len(t[0]) > 2 and t[1] < tour_limit, zip(tours, tour_costs)))
+            tours = [t[0] for t in tours]
+
             tours_str = tours
             #
             # for tour, cost in zip(tours, tour_costs):
             #     if 0 < cost <= tour_limit:
             #         good_tours.append(tour)
 
-            tours_str = [[villages[i] + ' IASI ROMANIA' for i in tour] for tour in tours_str if len(tour) > 2]
-            print(tours_str[0])
+            # tours_str = [[villages[i] + ' IASI ROMANIA' for i in tour] for tour in tours_str if len(tour) > 2]
+            # print(tours_str[0])
 
             print(cost)
-            print(MapsUrl().generate_from(tours_str[0]))
+            # print(MapsUrl().generate_from(tours_str[0]))
 
-            with open('data/tours/tours_{}.txt'.format(cost), 'w') as f:
-                for idx, tour in enumerate(tours_str):
-                    f.write(str(tour) + '\n')
-                    f.write(MapsUrl().generate_from(tour) + '\n')
-                    node_times = [i[1] * 30 / 12 for i in NatalityDataReader().read()]
-                    node_times [:5] = [0 for i in range(5)]
-                    f.write('Timp in fiecare comuna (minute pe luna):\n' + '\n'.join([tour[ti] + ' : ' + str(node_times[i]) for ti, i in enumerate(tours[idx])]) + '\n')
-
-                    f.write('\n\n')
+            with open('data/tours/good_tours.txt'.format(cost), 'a') as f:
+                for tour in tours:
+                    f.write(' '.join(map(str, tour)) + '\n')
+                # for idx, tour in enumerate(tours_str):
+                #     f.write(str(tour) + '\n')
+                #     f.write(MapsUrl().generate_from(tour) + '\n')
+                #     node_times = [i[1] * 30 / 12 for i in NatalityDataReader().read()]
+                #     node_times [:5] = [0 for i in range(5)]
+                #     f.write('Timp in fiecare comuna (minute pe luna):\n' + '\n'.join([tour[ti] + ' : ' + str(node_times[i]) for ti, i in enumerate(tours[idx])]) + '\n')
+                #
+                #     f.write('\n\n')
 
 

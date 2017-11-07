@@ -7,7 +7,7 @@ import math
 class SaSolver(ABC):
     MAX_TEMPERATURE = 1000000
 
-    def __init__(self, print_progress_freq = 10000):
+    def __init__(self, print_progress_freq = 1):
         self.__temperature = None
         self.__cooling_rate = None
 

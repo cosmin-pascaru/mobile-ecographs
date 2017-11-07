@@ -1,9 +1,8 @@
-import urllib
-
 import copy
+
 import requests
 
-from Singleton import Singleton
+from old.Singleton import Singleton
 
 
 class MapsUrl(metaclass=Singleton):

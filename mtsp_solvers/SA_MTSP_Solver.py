@@ -1,10 +1,8 @@
+import copy
+import math
 import random
 
-import math
-
-import copy
-
-from NatalityDataReader import NatalityDataReader
+from old.NatalityDataReader import NatalityDataReader
 from .MTSP_Solver import MTSP_Solver
 
 
@@ -33,7 +31,8 @@ class SA_MTSP_Solver(MTSP_Solver):
             for tour_st, tour_end in zip([0] + self.tour_ends[:-1], self.tour_ends):
                 circuit = [0] + self.permutation[tour_st:tour_end] + [0]
 
-                circuit_cost = sum(bonuses[i] for i in self.permutation[tour_st:tour_end] if i > 4)
+                circuit_cost = 0
+                # circuit_cost = sum(bonuses[i] for i in self.permutation[tour_st:tour_end] if i > 4)
 
                 for node_st, node_end in zip(circuit[:-1], circuit[1:]):
                     circuit_cost += distance_matrix[node_st][node_end]

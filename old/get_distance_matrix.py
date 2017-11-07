@@ -1,4 +1,4 @@
-from MapsApi import MapsApi
+from old.MapsApi import MapsApi
 
 with open("data/lista_comune.txt") as villages_file:
     lines = villages_file.readlines()

@@ -7,16 +7,17 @@ from src.params.planner_params import PlannerParams
 
 
 class Planner(ABC):
-    def __init__(self, manager : Manager, input_ : PlanningInput, params : PlannerParams, scorer : PlanningScorer):
+    def __init__(self, manager : Manager, input : PlanningInput, params : PlannerParams, scorer : PlanningScorer):
         self.manager = manager
 
-        self.input = input_
+        self.input = input
         self.params = params
         self.scorer = scorer
         self.tours = None
 
         self.best_plan = None
+        self.best_cost = None
 
     @abstractmethod
-    def score(self, tours) -> float:
+    def compute_cost(self, tours) -> float:
         pass

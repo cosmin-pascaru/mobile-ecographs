@@ -12,9 +12,12 @@ class Planning:
             return len(self.tours)
 
         def __getitem__(self, index):
+            return self.tours[index]
+
+        def __setitem__(self, index, value):
             if len(self) <= index:
                 self.tours += [None] * (index - len(self) + 1)
-            return self.tours[index]
+            self.tours[index] = value
 
     class Tour:
         def __init__(self, tour = None, cnt_visits = None):
@@ -36,3 +39,6 @@ class Planning:
 
     def __getitem__(self, index):
         return self.days[index]
+
+    def __setitem__(self, key, value):
+        self.days[key] = value

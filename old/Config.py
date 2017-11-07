@@ -1,4 +1,4 @@
-from Singleton import Singleton
+from old.Singleton import Singleton
 
 
 class Config(metaclass=Singleton):

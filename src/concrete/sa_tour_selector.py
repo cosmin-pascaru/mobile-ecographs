@@ -24,13 +24,17 @@ class SaTourSelector(TourSelector, SaSolver):
         self.run_sa(self.params.sa_cooling_rate)
 
     def _existing_tour_indexes(self, sol):
-        return (i for i, x in enumerate(sol) if x)
+        return tuple(i for i, x in enumerate(sol) if x)
 
     def _missing_tour_indexes(self, sol):
-        return (i for i, x in enumerate(sol) if x)
+        return tuple(i for i, x in enumerate(sol) if x)
 
     def _get_random_sol(self) -> tuple:
         sol = [random.choice((True, False)) for _ in self.all]
+
+        while sol.count(True) == 0:
+            sol = [random.choice((True, False)) for _ in self.all]
+
         return sol, self._compute_cost(sol)
 
     def _get_random_neighbour(self, sol) -> tuple:
