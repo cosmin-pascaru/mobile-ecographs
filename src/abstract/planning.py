@@ -1,3 +1,5 @@
+from src.utils import SECONDS_PER_HOUR
+
 
 class Planning:
     class Day:
@@ -42,3 +44,59 @@ class Planning:
 
     def __setitem__(self, key, value):
         self.days[key] = value
+
+    def write(self, tours_file, days_file, manager):
+        places_names = manager.input.places_names
+
+        with open(tours_file, 'w') as f:
+            unique_tours = {}
+            for day in self.days:
+                if day is None:
+                    continue
+
+                for tour in day.tours:
+                    if tour is None:
+                        continue
+                    if tour.tour is None:
+                        continue
+                    tuple_tour = tuple(tour.tour)
+                    if unique_tours.get(tuple_tour, None) is None:
+                        unique_tours[tuple_tour] = len(unique_tours)
+
+            temp = list(unique_tours.items())
+            temp.sort(key=lambda x: x[1])
+
+            print(temp)
+            f.write('\n'.join('Index {}: \n'.format(i) + '\tDurata: {} ore \n'.format(manager.compute_tour_distance(t) / SECONDS_PER_HOUR) + '\t' + str([places_names[place] for place in t]) + '\n\t' + manager.get_url(tuple(t)) for t, i in temp))
+
+        with open(days_file, 'w') as f:
+            for i, day in enumerate(self.days):
+                f.write('Ziua {}:\n'.format(i))
+
+                for tour in day.tours:
+                    if tour is None:
+                        continue
+                    if tour.tour is None:
+                        continue
+
+                    tuple_tour = tuple(tour.tour)
+                    tour_index = unique_tours[tuple_tour]
+
+                    if sum(tour.cnt_visits) == 0:
+                        continue
+
+                    f.write('\tIndexul traseului: {}\n'.format(tour_index))
+
+                    time_on_road = manager.compute_tour_distance(tuple_tour) / SECONDS_PER_HOUR
+                    time_on_visits = sum(tour.cnt_visits) * 0.5 # hours
+
+                    f.write('\tDurata drum: {} ore\n'.format(time_on_road))
+                    f.write('\tDurata investigatii: {} ore\n'.format(time_on_visits))
+                    f.write('\tDurata totala: {} ore\n'.format(time_on_road + time_on_visits))
+
+                    f.write('\tComunele:\n')
+                    for place_index, place in enumerate(tuple_tour):
+                        cnt_visits = tour.cnt_visits[place_index]
+                        if cnt_visits == 0:
+                            continue
+                        f.write('\t\t{} : {} vizite, {} minute\n'.format(places_names[place], cnt_visits, cnt_visits * 30))

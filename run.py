@@ -25,6 +25,13 @@ data.tours = tours
 
 # Input
 inp = PlanningInput()
+
+places_names = tuple(map(lambda line: ' '.join(line.split()[1:]), open('data/lista_comune.txt').readlines()))
+places_suffix = ', Iasi, Romania'
+
+inp.places_names = places_names
+inp.places_suffix = places_suffix
+
 inp.consult_time = 30 * SECONDS_PER_MINUTE
 inp.cnt_days = 21
 inp.cnt_cars = 10
@@ -43,7 +50,7 @@ data.input = inp
 
 # Tour selector
 tour_sel_params = TourSelectorParams()
-tour_sel_params.sa_cooling_rate = 0.001
+tour_sel_params.sa_cooling_rate = 0.01
 tour_sel_params.debug = True
 
 data.tour_selector_cls = SaTourSelector

@@ -1,3 +1,4 @@
+import os
 import random
 
 import copy
@@ -31,6 +32,7 @@ class GreedyPlanner(Planner, GreedySolver):
         self.car = None
 
         self.remaining_visits = None
+        self.done = None
 
     def compute_cost(self, tours):
         if self.params.debug:
@@ -65,6 +67,7 @@ class GreedyPlanner(Planner, GreedySolver):
         self.day = 0
         self.car = 0
 
+        self.done = False
         self.remaining_visits = copy.deepcopy(self.input.consults_per_node)
 
     def _update_best(self):
@@ -76,6 +79,8 @@ class GreedyPlanner(Planner, GreedySolver):
 
             self.best_plan, self.best_cost = self.current_plan, self.current_cost
 
+            self.write_best_plan()
+
     def _apply_best_option(self):
         choices = [(tour, self._compute_option_cost(tour)) for tour in self.tours]
         choices.sort(key=lambda t: t[1])
@@ -84,6 +89,12 @@ class GreedyPlanner(Planner, GreedySolver):
 
         # Filter tours with too low score
         choices = choices[:new_len]
+        while (choices and choices[-1][1] == float('inf')):
+            choices.pop()
+
+        if not choices:
+            self.done = True
+
         choice = weighted_choice(choices)
 
         self._apply_choice(choice)
@@ -107,7 +118,7 @@ class GreedyPlanner(Planner, GreedySolver):
             self.car += 1
 
     def _done(self):
-        return all(x == 0 for x in self.remaining_visits) or self.car >= self.input.cnt_cars
+        return self.done or all(x == 0 for x in self.remaining_visits) or self.car >= self.input.cnt_cars
 
     def _compute_option_cost(self, tour):
         visit_duration = self.input.consult_time
@@ -122,7 +133,9 @@ class GreedyPlanner(Planner, GreedySolver):
         if sum(visits_per_node) == 0:
             return float('inf')  # a cost for a road where we do nothing is infinite
 
-        visits_cost = sum(cnt * normalize_dist(get_dist_at_idx(i)) for i, cnt in enumerate(visits_per_node))
+        # visits_cost = -sum(visits_per_node)
+        visits_cost = -sum(visits_per_node) * visit_duration
+        # visits_cost = sum(cnt * dist(get_dist_at_idx(i)) for i, cnt in enumerate(visits_per_node))
         """Cost should be higher with more visits, but lower as you visit places further away?"""
 
         return dist_on_road + visits_cost
@@ -148,3 +161,10 @@ class GreedyPlanner(Planner, GreedySolver):
                 visits[i] += min(self.remaining_visits[tour[i]], remaining_time // self.input.consult_time)
                 remaining_time -= self.input.consult_time * visits[i]
         return visits
+
+    def write_best_plan(self):
+        folder = 'data/plans'
+        tours_file = 'tours_{}'.format(self.best_cost)
+        days_file  = 'days_{}'.format(self.best_cost)
+
+        self.best_plan.write(os.path.join(folder, tours_file), os.path.join(folder, days_file), self.manager)

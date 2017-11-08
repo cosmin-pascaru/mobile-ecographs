@@ -1,3 +1,6 @@
+from src.concrete.maps_url import MapsUrl
+
+
 class Manager:
 
     class InitStruct:
@@ -46,3 +49,6 @@ class Manager:
             return 0
 
         return sum(self.get_distance(tour[i - 1], tour[i]) for i in range(1, len(tour))) + self.get_distance(tour[-1], tour[0])
+
+    def get_url(self, tour):
+        return MapsUrl().generate_from(self.input.places_names[i] + self.input.places_suffix for i in tour)

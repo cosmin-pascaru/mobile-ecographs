@@ -10,12 +10,13 @@ class MapsUrl(metaclass=Singleton):
         pass
 
     def generate_from(self, arr):
+        arr = tuple(arr)
         assert len(arr) >= 2
 
         arr = copy.deepcopy(arr)
         arr = [requests.utils.quote(s) for s in arr]
 
-        print(arr)
+        # print(arr)
 
         begin = r'https://www.google.com/maps/dir/?api=1&'
 
