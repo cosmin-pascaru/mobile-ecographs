@@ -26,15 +26,16 @@ data.tours = tours
 # Input
 inp = PlanningInput()
 
-places_names = tuple(map(lambda line: ' '.join(line.split()[1:]), open('data/lista_comune.txt').readlines()))
+places_names = tuple(map(lambda line: (' '.join(line.split()[1:])).title(), open('data/lista_comune.txt').readlines()))
 places_suffix = ', Iasi, Romania'
 
 inp.places_names = places_names
 inp.places_suffix = places_suffix
 
 inp.consult_time = 30 * SECONDS_PER_MINUTE
+inp.max_time_per_day = 10 * SECONDS_PER_HOUR
 inp.cnt_days = 21
-inp.cnt_cars = 10
+inp.cnt_cars = 2
 
 # Number of visits per place
 visits_cnts = list(map(lambda line: math.ceil(int(line.split()[-1]) * 7 / 12), open('data/populatie_ajustata.txt', 'r').readlines()))
@@ -58,7 +59,7 @@ data.tour_selector_params = tour_sel_params
 
 # Planner
 planner_params = PlannerParams()
-planner_params.debug = True
+planner_params.debug = False
 
 data.planner_cls = GreedyPlanner
 data.planner_params = planner_params

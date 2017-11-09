@@ -2,7 +2,19 @@ import random
 
 
 SECONDS_PER_MINUTE = 60
-SECONDS_PER_HOUR   = 60 * 60
+SECONDS_PER_HOUR   = 60 * SECONDS_PER_MINUTE
+
+
+def sec_to_str(seconds):
+    h = seconds // SECONDS_PER_HOUR
+    m = (seconds % SECONDS_PER_HOUR) // SECONDS_PER_MINUTE
+
+    h_str = '{} ore'.format(h) if h > 0 else ''
+    si    = ' si ' if (h > 0) and (m > 0) else ''
+    m_str = '{} minute'.format(m) if m > 0 or (m == 0 and h == 0) else ''
+
+    return "{}{}{}".format(h_str, si, m_str)
+
 
 def weighted_choice(choices):
     if not choices:

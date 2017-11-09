@@ -15,6 +15,9 @@ class PlanningInput:
         self.consult_time = None
         """Duration of a consult in seconds"""
 
+        self.max_time_per_day = None
+        """Maximum time spent in a day"""
+
         self.cnt_cars = None
         """Number of tours that can be done in a day"""
 
