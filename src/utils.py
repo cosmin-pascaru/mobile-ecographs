@@ -1,5 +1,6 @@
 import random
 
+import datetime
 
 SECONDS_PER_MINUTE = 60
 SECONDS_PER_HOUR   = 60 * SECONDS_PER_MINUTE
@@ -34,3 +35,22 @@ def weighted_choice(choices):
 def list_sub(a, b):
     """Returns a list containing x - y, for every (x, y) in zip(a, b)"""
     return list(x - y for x, y in zip(a, b))
+
+
+def today_as_str():
+    months = ['',
+              'Ianuarie',
+              'Februarie',
+              'Martie',
+              'Aprilie',
+              'Mai',
+              'Iunie',
+              'Iulie',
+              'August',
+              'Septembrie',
+              'Octombrie',
+              'Noiembrie',
+              'Decembrie']
+
+    today = datetime.datetime.today()
+    return '{} {}'.format(today.day, months[today.month])

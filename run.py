@@ -1,5 +1,6 @@
 import math
 import os
+import random
 
 import sys
 
@@ -15,6 +16,14 @@ from src.params.planning_scorer_params import PlanningScorerParams
 from src.params.tour_selector_params import TourSelectorParams
 from src.utils import SECONDS_PER_MINUTE
 from src.utils import SECONDS_PER_HOUR
+
+# seed = random.randint(0, (1 << 30))
+seed = int(open('data/last_seed.txt', 'r').read().strip())
+# seed = 475065778
+
+random.seed(seed)
+with open('data/last_seed.txt', 'w') as f:
+    f.write(str(seed))
 
 # Init struct
 data = Manager.InitStruct()
@@ -60,6 +69,7 @@ data.tour_selector_params = tour_sel_params
 # Planner
 planner_params = PlannerParams()
 planner_params.debug = False
+planner_params.write_best_plan = True
 
 data.planner_cls = GreedyPlanner
 data.planner_params = planner_params
@@ -73,6 +83,11 @@ data.scorer_params = scorer_params
 
 # Manager params
 manager_params = ManagerParams()
+manager_params.debug = False
+manager_params.maps_api_key = open('data/googleapi_key.txt', 'r').read().strip()
+manager_params.tour_template_file = 'data/html/templates/tour_template.html'
+manager_params.index_template_file = 'data/html/templates/index_template.html'
+
 data.manager_params = manager_params
 
 # Manager instantiation

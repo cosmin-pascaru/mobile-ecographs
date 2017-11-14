@@ -181,8 +181,15 @@ class GreedyPlanner(Planner, GreedySolver):
         return visits
 
     def write_best_plan(self):
+        if not self.params.write_best_plan:
+            return
+
         folder = 'data/plans'
+        html_folder = 'data/html'
+        tours_html_file = 'tours_{}.html'.format(self.best_cost)
+
         tours_file = 'tours_{}.txt'.format(self.best_cost)
         days_file  = 'days_{}.txt'.format(self.best_cost)
 
-        self.best_plan.write(os.path.join(folder, tours_file), os.path.join(folder, days_file), self.manager)
+        Planning.Writer().write_tours_html(self.best_plan, os.path.join(html_folder, tours_html_file), self.manager)
+        Planning.Writer().write(self.best_plan, os.path.join(folder, tours_file), os.path.join(folder, days_file), self.manager)

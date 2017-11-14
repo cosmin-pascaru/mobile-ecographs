@@ -1,3 +1,4 @@
+from src.abstract.planning import Planning
 from src.concrete.maps_url import MapsUrl
 
 
@@ -57,3 +58,22 @@ class Manager:
 
     def get_url(self, tour):
         return MapsUrl().generate_from(self.input.places_names[i] + self.input.places_suffix for i in tour)
+
+    def get_embed_url(self, tour):
+        return MapsUrl().generate_embed(self.params.maps_api_key, (self.input.places_names[i] + self.input.places_suffix for i in tour))
+
+    def compute_unique_tours(self, planning : Planning):
+        unique_tours = {}
+        for day in planning.days:
+            if day is None:
+                continue
+
+            for tour in day.tours:
+                if tour is None:
+                    continue
+                if tour.tour is None:
+                    continue
+                tuple_tour = tuple(tour.tour)
+                if unique_tours.get(tuple_tour, None) is None:
+                    unique_tours[tuple_tour] = len(unique_tours)
+        return unique_tours
