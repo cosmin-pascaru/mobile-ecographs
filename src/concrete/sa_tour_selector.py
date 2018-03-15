@@ -6,12 +6,12 @@ from src.abstract.planner import Planner
 from src.abstract.sa_solver import SaSolver
 from src.abstract.tour_selector import TourSelector
 from src.concrete.planning_manager import Manager
+from src.params.constants import MAX_TIME_ON_ROAD
 from src.params.tour_selector_params import TourSelectorParams
 from src.utils import SECONDS_PER_HOUR
 
 
 class SaTourSelector(TourSelector, SaSolver):
-    MAX_TIME_ON_ROAD = 7 * SECONDS_PER_HOUR
 
     def __init__(self, manager: Manager, tours, params: TourSelectorParams, planner : Planner):
         TourSelector.__init__(self, manager, tours, params, planner)
@@ -59,6 +59,6 @@ class SaTourSelector(TourSelector, SaSolver):
 
     def _filter_useless_tours(self):
         prev_len = len(self.tours)
-        tours = [tour for tour in self.tours if self.manager.compute_tour_distance(tour) <= self.MAX_TIME_ON_ROAD]
+        tours = [tour for tour in self.tours if self.manager.compute_tour_distance(tour) <= MAX_TIME_ON_ROAD]
 
         print('Filtered {} useless tours!'.format(prev_len - len(tours)))

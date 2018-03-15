@@ -1,6 +1,6 @@
 from old.Singleton import Singleton
 from src import utils
-from src.utils import SECONDS_PER_HOUR, sec_to_str
+from src.utils import sec_to_str
 
 
 class Planning:

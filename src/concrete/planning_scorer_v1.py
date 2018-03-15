@@ -4,6 +4,7 @@ from src.abstract.planning import Planning
 from src.abstract.planning_scorer import PlanningScorer
 from src.concrete.planning_manager import Manager
 from src.input.planning_input import PlanningInput
+from src.params.constants import CONSULT_TIME
 from src.params.planning_scorer_params import PlanningScorerParams
 
 
@@ -34,7 +35,7 @@ class PlanningScorerV1 (PlanningScorer):
                     continue
 
                 time_on_road += self.manager.compute_tour_distance(tour.tour)
-                time_on_consults += sum(tour.cnt_visits) * self.input.consult_time
+                time_on_consults += sum(tour.cnt_visits) * CONSULT_TIME
 
                 for i, cnt in enumerate(tour.cnt_visits):
                     self.remaining_visits[tour.tour[i]] -= cnt

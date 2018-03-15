@@ -12,11 +12,14 @@ class PlanningInput:
         self.consults_per_node = None
         """List of numbers, how many consults to do at every node"""
 
-        self.consult_time = None
-        """Duration of a consult in seconds"""
-
-        self.max_time_per_day = None
-        """Maximum time spent in a day"""
+        # self.consult_time = None
+        # """Duration of a consult, in seconds"""
+        #
+        # self.max_time_per_day = None
+        # """Maximum time spent in a day, in seconds"""
+        #
+        # self.max_time_on_road = None
+        # """Maximum time spent on road in a single day, in seconds"""
 
         self.cnt_cars = None
         """Number of tours that can be done in a day"""

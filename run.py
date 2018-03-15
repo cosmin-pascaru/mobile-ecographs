@@ -10,15 +10,14 @@ from src.concrete.planning_manager import Manager
 from src.concrete.planning_scorer_v1 import PlanningScorerV1
 from src.concrete.sa_tour_selector import SaTourSelector
 from src.input.planning_input import PlanningInput
+from src.params.constants import SECONDS_PER_MINUTE, SECONDS_PER_HOUR
 from src.params.manager_params import ManagerParams
 from src.params.planner_params import PlannerParams
 from src.params.planning_scorer_params import PlanningScorerParams
 from src.params.tour_selector_params import TourSelectorParams
-from src.utils import SECONDS_PER_MINUTE
-from src.utils import SECONDS_PER_HOUR
 
-# seed = random.randint(0, (1 << 30))
-seed = int(open('data/last_seed.txt', 'r').read().strip())
+seed = random.randint(0, (1 << 30))
+# seed = int(open('data/last_seed.txt', 'r').read().strip())
 # seed = 475065778
 
 random.seed(seed)
@@ -40,9 +39,6 @@ places_suffix = ', Iasi, Romania'
 
 inp.places_names = places_names
 inp.places_suffix = places_suffix
-
-inp.consult_time = 30 * SECONDS_PER_MINUTE
-inp.max_time_per_day = 10 * SECONDS_PER_HOUR
 inp.cnt_days = 21
 inp.cnt_cars = 2
 

@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 
-class MTSP_Solver(ABC):
+class MtspSolver(ABC):
     def __init__(self):
         pass
 

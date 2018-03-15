@@ -1,7 +1,5 @@
-import os
-import random
-
 import copy
+import os
 
 from src.abstract.greedy_solver import GreedySolver
 from src.abstract.planner import Planner
@@ -9,15 +7,15 @@ from src.abstract.planning import Planning
 from src.abstract.planning_scorer import PlanningScorer
 from src.concrete.planning_manager import Manager
 from src.input.planning_input import PlanningInput
+from src.params.constants import CONSULT_TIME, MAX_TIME_PER_DAY
 from src.params.planner_params import PlannerParams
-from src.utils import weighted_choice, SECONDS_PER_HOUR
+from src.utils import weighted_choice
 
 
 class GreedyPlanner(Planner, GreedySolver):
     NR_ITERATIONS = 1
     KEEP_FACTOR = 0.1
     # COST_CORRECTION_BIAS = 3 * SECONDS_PER_HOUR  # ??? random value... 3 hours
-    # MAX_TIME_PER_DAY = 8 * SECONDS_PER_HOUR  # 8 hours
 
     def __init__(self, manager: Manager, input: PlanningInput, params: PlannerParams, scorer: PlanningScorer):
         Planner.__init__(self, manager, input, params, scorer)
@@ -119,8 +117,6 @@ class GreedyPlanner(Planner, GreedySolver):
         return self.done or all(x == 0 for x in self.remaining_visits) or self.car >= self.input.cnt_cars
 
     def _compute_option_cost(self, tour):
-        visit_duration = self.input.consult_time
-
         # get_dist_at_idx = lambda i: self.manager.get_distance(src, tour[i])
         # normalize_dist = lambda d: (-d + self.COST_CORRECTION_BIAS) * visit_duration
 
@@ -130,7 +126,7 @@ class GreedyPlanner(Planner, GreedySolver):
             return float('inf')  # a cost for a road where we do nothing is infinite
 
         # visits_cost = -sum(visits_per_node)
-        visits_cost = -sum(visits_per_node) * visit_duration
+        visits_cost = -sum(visits_per_node) * CONSULT_TIME
         # visits_cost = sum(cnt * dist(get_dist_at_idx(i)) for i, cnt in enumerate(visits_per_node))
         """Cost should be higher with more visits, but lower as you visit places further away?"""
 
@@ -147,23 +143,23 @@ class GreedyPlanner(Planner, GreedySolver):
 
         visits = [0 for _ in tour]
 
-        remaining_time = self.manager.input.max_time_per_day
+        remaining_time = MAX_TIME_PER_DAY
 
         for i, imp in node_importances:
 
-            if remaining_time < 2 * self.input.consult_time:
+            if remaining_time < 2 * CONSULT_TIME:
                 break
 
             if self.remaining_visits[tour[i]] > 0:
                 # self.remaining_visits[tour[i]] -= 1
                 visits[i] += 1
 
-                temp_remaining_time  = self.manager.input.max_time_per_day
+                temp_remaining_time  = MAX_TIME_PER_DAY
                 temp_remaining_time -= self.manager.compute_tour_distance(tour, visits)
-                temp_remaining_time -= sum(visits) * self.input.consult_time
+                temp_remaining_time -= sum(visits) * CONSULT_TIME
 
                 if temp_remaining_time >= 0:
-                    temp = min(self.remaining_visits[tour[i]] - 1, temp_remaining_time // self.input.consult_time)
+                    temp = min(self.remaining_visits[tour[i]] - 1, temp_remaining_time // CONSULT_TIME)
 
                     visits[i] += temp
                     # self.remaining_visits[tour[i]] -= temp
@@ -172,7 +168,7 @@ class GreedyPlanner(Planner, GreedySolver):
                     # temp_remaining_time -= self.manager.compute_tour_distance(tour, visits)
                     # temp_remaining_time -= sum(visits) * self.input.consult_time
 
-                    temp_remaining_time -= temp * self.input.consult_time
+                    temp_remaining_time -= temp * CONSULT_TIME
 
                     remaining_time = temp_remaining_time
                 else:
@@ -191,5 +187,9 @@ class GreedyPlanner(Planner, GreedySolver):
         tours_file = 'tours_{}.txt'.format(self.best_cost)
         days_file  = 'days_{}.txt'.format(self.best_cost)
 
-        Planning.Writer().write_tours_html(self.best_plan, os.path.join(html_folder, tours_html_file), self.manager)
-        Planning.Writer().write(self.best_plan, os.path.join(folder, tours_file), os.path.join(folder, days_file), self.manager)
+        tours_html_path = os.path.join(html_folder, tours_html_file)
+        tours_path = os.path.join(folder, tours_file)
+        days_path = os.path.join(folder, days_file)
+
+        Planning.Writer().write_tours_html(self.best_plan, tours_html_path, self.manager)
+        Planning.Writer().write           (self.best_plan, tours_path, days_path, self.manager)
