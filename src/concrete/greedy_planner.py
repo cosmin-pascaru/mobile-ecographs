@@ -13,15 +13,16 @@ from src.utils import weighted_choice
 
 
 class GreedyPlanner(Planner, GreedySolver):
-    NR_ITERATIONS = 1
-    KEEP_FACTOR = 0.1
     # COST_CORRECTION_BIAS = 3 * SECONDS_PER_HOUR  # ??? random value... 3 hours
 
     def __init__(self, manager: Manager, input: PlanningInput, params: PlannerParams, scorer: PlanningScorer):
         Planner.__init__(self, manager, input, params, scorer)
         GreedySolver.__init__(self)
 
-        self.get_dist = lambda s, d: self.manager.get_distance(s, d)
+        self.CNT_ITERATIONS = params.cnt_iterations
+        self.KEEP_PERCENT   = params.keep_percent
+
+        self.get_dist = lambda source, destination: self.manager.get_distance(source, destination)
 
         self.current_plan = None
         self.current_cost = None
@@ -42,7 +43,7 @@ class GreedyPlanner(Planner, GreedySolver):
         self.tours = tours
 
         avg = 0
-        for _ in range(self.NR_ITERATIONS):
+        for _ in range(self.CNT_ITERATIONS):
             self._reset()
 
             self.greedy_run()
@@ -52,7 +53,7 @@ class GreedyPlanner(Planner, GreedySolver):
 
             self._update_best()
 
-        avg /= self.NR_ITERATIONS
+        avg /= self.CNT_ITERATIONS
 
         if self.params.debug:
             print('Average is {}'.format(avg))
@@ -82,11 +83,11 @@ class GreedyPlanner(Planner, GreedySolver):
         choices = [(tour, self._compute_option_cost(tour)) for tour in self.tours]
         choices.sort(key=lambda t: t[1])
 
-        new_len = max(int(len(choices) * self.KEEP_FACTOR), 1)
+        new_len = max(int(len(choices) * self.KEEP_PERCENT), 1)
 
         # Filter tours with too low score
         choices = choices[:new_len]
-        while (choices and choices[-1][1] == float('inf')):
+        while choices and choices[-1][1] == float('inf'):
             choices.pop()
 
         if not choices:

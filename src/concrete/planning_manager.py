@@ -38,7 +38,8 @@ class Manager:
                                                            planner=self.planner)
 
     def run(self):
-        self.tour_selector.run_sa(self.tour_selector.params.sa_cooling_rate)
+        # self.tour_selector.run_sa(self.tour_selector.params.sa_cooling_rate)
+        self.tour_selector.run()
 
         # self.set_output()
 

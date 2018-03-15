@@ -3,7 +3,7 @@ import math
 import random
 
 from old.NatalityDataReader import NatalityDataReader
-from .MtspSolver import MtspSolver
+from src.abstract.mtsp_solver import MtspSolver
 
 
 class SaMtspSolverParams(object):

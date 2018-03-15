@@ -8,7 +8,7 @@ from src.params.constants import CONSULT_TIME
 from src.params.planning_scorer_params import PlanningScorerParams
 
 
-class PlanningScorerV1 (PlanningScorer):
+class SimplePlanningScorer (PlanningScorer):
     NOT_VISITED_COST = 10000000
     CAR_COST         = 10000
 

@@ -1,6 +1,6 @@
 from NatalityDataReader import NatalityDataReader
 
-from mtsp_solvers.SaMtspSolver import SaMtspSolverParams
+from src.concrete.sa_mtsp_solver import SaMtspSolverParams
 from old.ToursFinder import ToursFinder
 
 print(NatalityDataReader().read())

@@ -79,8 +79,8 @@ class Planning:
         def write(self, planning, tours_file, days_file, manager):
             unique_tours = manager.compute_unique_tours(planning)
 
-            self.write_tours(planning, tours_file, unique_tours, manager)
-            self.write_days(planning, days_file, unique_tours, manager)
+            # self.write_tours(planning, tours_file, unique_tours, manager)
+            # self.write_days(planning, days_file, unique_tours, manager)
 
         def write_tours(self, planning, tours_file, unique_tours, manager):
             places_names = manager.input.places_names

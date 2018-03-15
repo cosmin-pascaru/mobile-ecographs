@@ -1,4 +1,4 @@
-from mtsp_solvers.SaMtspSolver import SaMtspSolver, SaMtspSolverParams
+from src.concrete.sa_mtsp_solver import SaMtspSolver, SaMtspSolverParams
 
 
 class ToursFinderParams(object):

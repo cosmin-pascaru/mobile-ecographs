@@ -5,16 +5,17 @@ import random
 import sys
 
 from src.abstract.tour_selector import TourSelector
+from src.concrete.disabled_tour_selector import DisabledTourSelector
 from src.concrete.greedy_planner import GreedyPlanner
 from src.concrete.planning_manager import Manager
-from src.concrete.planning_scorer_v1 import PlanningScorerV1
+from src.concrete.simple_planning_scorer import SimplePlanningScorer
 from src.concrete.sa_tour_selector import SaTourSelector
 from src.input.planning_input import PlanningInput
 from src.params.constants import SECONDS_PER_MINUTE, SECONDS_PER_HOUR
 from src.params.manager_params import ManagerParams
 from src.params.planner_params import PlannerParams
 from src.params.planning_scorer_params import PlanningScorerParams
-from src.params.tour_selector_params import TourSelectorParams
+from src.params.tour_selector_params import TourSelectorParams, DisabledTourSelectorParams
 
 seed = random.randint(0, (1 << 30))
 # seed = int(open('data/last_seed.txt', 'r').read().strip())
@@ -55,17 +56,23 @@ inp.distance_matrix = dm
 data.input = inp
 
 # Tour selector
-tour_sel_params = TourSelectorParams()
-tour_sel_params.sa_cooling_rate = 0.01
+tour_sel_params = DisabledTourSelectorParams()
 tour_sel_params.debug = True
+tour_sel_params.cnt_iterations = 1000
 
-data.tour_selector_cls = SaTourSelector
+# tour_sel_params.sa_cooling_rate = 0.01
+
+data.tour_selector_cls = DisabledTourSelector
 data.tour_selector_params = tour_sel_params
+# data.tour_selector_cls = SaTourSelector
+# data.tour_selector_params = tour_sel_params
 
 # Planner
 planner_params = PlannerParams()
 planner_params.debug = False
 planner_params.write_best_plan = True
+planner_params.cnt_iterations = 1
+planner_params.keep_percent = 0.2
 
 data.planner_cls = GreedyPlanner
 data.planner_params = planner_params
@@ -74,7 +81,7 @@ data.planner_params = planner_params
 scorer_params = PlanningScorerParams()
 scorer_params.debug = False
 
-data.scorer_cls = PlanningScorerV1
+data.scorer_cls = SimplePlanningScorer
 data.scorer_params = scorer_params
 
 # Manager params
