@@ -1,10 +1,9 @@
-from src.abstract.planning import Planning
-from src.concrete.maps_url import MapsUrl
+from src.abstract.planning import CPlanning
+from src.concrete.maps_url import CMapsUrlConverter
 
 
-class Manager:
-
-    class InitStruct:
+class CManager:
+    class SManagerInput:
         def __init__(self):
             self.input = None
 
@@ -21,7 +20,7 @@ class Manager:
             self.scorer_cls = None
             self.scorer_params = None
 
-    def __init__(self, init_struct : InitStruct):
+    def __init__(self, init_struct : SManagerInput):
         self.input = init_struct.input
         self.params = init_struct.manager_params
 
@@ -38,10 +37,7 @@ class Manager:
                                                            planner=self.planner)
 
     def run(self):
-        # self.tour_selector.run_sa(self.tour_selector.params.sa_cooling_rate)
         self.tour_selector.run()
-
-        # self.set_output()
 
     def get_distance(self, x, y):
         return self.input.distance_matrix[x][y]
@@ -58,12 +54,12 @@ class Manager:
         return self.compute_tour_distance(actual_tour)
 
     def get_url(self, tour):
-        return MapsUrl().generate_from(self.input.places_names[i] + self.input.places_suffix for i in tour)
+        return CMapsUrlConverter().generate_from(self.input.places_names[i] + self.input.places_suffix for i in tour)
 
     def get_embed_url(self, tour):
-        return MapsUrl().generate_embed(self.params.maps_api_key, (self.input.places_names[i] + self.input.places_suffix for i in tour))
+        return CMapsUrlConverter().generate_embed(self.params.maps_api_key, (self.input.places_names[i] + self.input.places_suffix for i in tour))
 
-    def compute_unique_tours(self, planning : Planning):
+    def compute_unique_tours(self, planning : CPlanning):
         unique_tours = {}
         for day in planning.days:
             if day is None:

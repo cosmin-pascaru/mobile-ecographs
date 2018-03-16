@@ -4,12 +4,12 @@ import random
 
 import sys
 
-from src.abstract.tour_selector import TourSelector
-from src.concrete.disabled_tour_selector import DisabledTourSelector
-from src.concrete.greedy_planner import GreedyPlanner
-from src.concrete.planning_manager import Manager
+from src.abstract.tour_selector import CTourSelector
+from src.concrete.disabled_tour_selector import CDisabledTourSelector
+from src.concrete.greedy_planner import CGreedyPlanner
+from src.concrete.planning_manager import CManager
 from src.concrete.simple_planning_scorer import SimplePlanningScorer
-from src.concrete.sa_tour_selector import SaTourSelector
+from src.concrete.sa_tour_selector import CSaTourSelector
 from src.input.planning_input import PlanningInput
 from src.params.constants import SECONDS_PER_MINUTE, SECONDS_PER_HOUR
 from src.params.manager_params import ManagerParams
@@ -26,7 +26,7 @@ with open('data/last_seed.txt', 'w') as f:
     f.write(str(seed))
 
 # Init struct
-data = Manager.InitStruct()
+data = CManager.SManagerInput()
 
 # Tours
 tours = list(map(lambda line: list(map(int, line.split())), open('data/tours/good_tours.txt', 'r').readlines()))
@@ -62,7 +62,7 @@ tour_sel_params.cnt_iterations = 1000
 
 # tour_sel_params.sa_cooling_rate = 0.01
 
-data.tour_selector_cls = DisabledTourSelector
+data.tour_selector_cls = CDisabledTourSelector
 data.tour_selector_params = tour_sel_params
 # data.tour_selector_cls = SaTourSelector
 # data.tour_selector_params = tour_sel_params
@@ -74,7 +74,7 @@ planner_params.write_best_plan = True
 planner_params.cnt_iterations = 1
 planner_params.keep_percent = 0.2
 
-data.planner_cls = GreedyPlanner
+data.planner_cls = CGreedyPlanner
 data.planner_params = planner_params
 
 # Scorer
@@ -94,6 +94,6 @@ manager_params.index_template_file = 'data/html/templates/index_template.html'
 data.manager_params = manager_params
 
 # Manager instantiation
-manager = Manager(data)
+manager = CManager(data)
 
 manager.run()

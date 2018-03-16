@@ -2,23 +2,23 @@ from abc import ABC, abstractmethod
 
 import copy
 
-from src.abstract.planning import Planning
-from src.concrete.planning_manager import Manager
+from src.abstract.planning import CPlanning
+from src.concrete.planning_manager import CManager
 from src.input.planning_input import PlanningInput
 from src.params.planning_scorer_params import PlanningScorerParams
 
 
-class PlanningScorer(ABC):
-    def __init__(self, manager:Manager, params: PlanningScorerParams, input: PlanningInput):
+class CPlanningScorer(ABC):
+    def __init__(self, manager:CManager, params: PlanningScorerParams, input: PlanningInput):
         self.manager = manager
         self.params = params
         self.input = input
 
     @abstractmethod
-    def compute_cost(self, planning : Planning):
+    def compute_cost(self, planning : CPlanning):
         pass
 
-    def compute_not_visited_cnt(self, planning : Planning):
+    def compute_not_visited_cnt(self, planning : CPlanning):
         remaining = copy.deepcopy(self.input.consults_per_node)
 
         for day in planning.days:

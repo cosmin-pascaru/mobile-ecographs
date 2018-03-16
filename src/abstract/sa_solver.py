@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 import math
 
 
-class SaSolver(ABC):
+class CSaSolver(ABC):
     MAX_TEMPERATURE = 1000000
 
     def __init__(self, print_progress_freq = 1):
@@ -52,8 +52,10 @@ class SaSolver(ABC):
 
     @abstractmethod
     def _get_random_sol(self) -> tuple:
+        """Returns a tuple (sol, cost)"""
         pass
 
     @abstractmethod
     def _get_random_neighbour(self, sol) -> tuple:
+        """Returns a tuple (sol, cost)"""
         pass

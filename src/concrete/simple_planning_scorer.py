@@ -1,23 +1,23 @@
 import copy
 
-from src.abstract.planning import Planning
-from src.abstract.planning_scorer import PlanningScorer
-from src.concrete.planning_manager import Manager
+from src.abstract.planning import CPlanning
+from src.abstract.planning_scorer import CPlanningScorer
+from src.concrete.planning_manager import CManager
 from src.input.planning_input import PlanningInput
 from src.params.constants import CONSULT_TIME
 from src.params.planning_scorer_params import PlanningScorerParams
 
 
-class SimplePlanningScorer (PlanningScorer):
+class SimplePlanningScorer (CPlanningScorer):
     NOT_VISITED_COST = 10000000
     CAR_COST         = 10000
 
-    def __init__(self, manager:Manager, params: PlanningScorerParams, input: PlanningInput):
+    def __init__(self, manager:CManager, params: PlanningScorerParams, input: PlanningInput):
         super().__init__(manager, params, input)
 
         self.remaining_visits = None
 
-    def compute_cost(self, planning: Planning):
+    def compute_cost(self, planning: CPlanning):
         self._init_remaining_visits()
 
         time_on_road = 0

@@ -1,4 +1,4 @@
-from src.concrete.sa_mtsp_solver import SaMtspSolver, SaMtspSolverParams
+from src.concrete.sa_mtsp_solver import CSaMtspSolver, SSaMtspSolverParams
 
 
 class ToursFinderParams(object):
@@ -15,7 +15,7 @@ class ToursFinder:
 
     def compute_tours(self,
                       tours_finder_params : ToursFinderParams,
-                      mtsp_solver_params  : SaMtspSolverParams,):
+                      mtsp_solver_params  : SSaMtspSolverParams, ):
 
         times_filename  = tours_finder_params.times_filename
         places_filename = tours_finder_params.places_filename
@@ -31,7 +31,7 @@ class ToursFinder:
         hours_on_road_limit = 8
         tour_limit = 60 * 60 * hours_on_road_limit
 
-        solver = SaMtspSolver(mtsp_solver_params)
+        solver = CSaMtspSolver(mtsp_solver_params)
 
         all_tours = []
 

@@ -2,25 +2,25 @@ import random
 
 import copy
 
-from src.abstract.planner import Planner
-from src.abstract.sa_solver import SaSolver
-from src.abstract.tour_selector import TourSelector
-from src.concrete.planning_manager import Manager
+from src.abstract.planner import CPlanner
+from src.abstract.sa_solver import CSaSolver
+from src.abstract.tour_selector import CTourSelector
+from src.concrete.planning_manager import CManager
 from src.params.constants import MAX_TIME_ON_ROAD
-from src.params.tour_selector_params import TourSelectorParams, SaTourSelectorParams
+from src.params.tour_selector_params import TourSelectorParams, SSaTourSelectorParams
 from src.utils import SECONDS_PER_HOUR
 
 
-class SaTourSelector(TourSelector, SaSolver):
+class CSaTourSelector(CTourSelector, CSaSolver):
+    def __init__(self, manager: CManager, tours, params: SSaTourSelectorParams, planner : CPlanner):
+        CTourSelector.__init__(self, manager, tours, params, planner)
+        CSaSolver.__init__(self, params.sa_cooling_rate)
 
-    def __init__(self, manager: Manager, tours, params: SaTourSelectorParams, planner : Planner):
-        TourSelector.__init__(self, manager, tours, params, planner)
-        SaSolver.__init__(self, params.sa_cooling_rate)
-
-        self._filter_too_long_tours()
-        self.all = [1 for _ in tours]
+        self.all = None
 
     def run(self):
+        self._filter_too_long_tours()
+        self.all = [1 for _ in self.tours]
         self.run_sa(self.params.sa_cooling_rate)
 
     def _existing_tour_indexes(self, sol):

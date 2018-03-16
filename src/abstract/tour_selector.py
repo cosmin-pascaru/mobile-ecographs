@@ -1,13 +1,13 @@
 from abc import ABC, abstractmethod
 
-from src.abstract.planner import Planner
-from src.concrete.planning_manager import Manager
+from src.abstract.planner import CPlanner
+from src.concrete.planning_manager import CManager
 from src.params.constants import MAX_TIME_ON_ROAD
 from src.params.tour_selector_params import TourSelectorParams
 
 
-class TourSelector(ABC):
-    def __init__(self, manager: Manager, tours, params : TourSelectorParams, planner : Planner):
+class CTourSelector(ABC):
+    def __init__(self, manager: CManager, tours, params : TourSelectorParams, planner : CPlanner):
         self.manager = manager
 
         self.tours = tours

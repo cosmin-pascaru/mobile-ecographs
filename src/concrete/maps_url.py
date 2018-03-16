@@ -5,7 +5,7 @@ import requests
 from old.Singleton import Singleton
 
 
-class MapsUrl(metaclass=Singleton):
+class CMapsUrlConverter(metaclass=Singleton):
     def __init__(self):
         pass
 

@@ -5,7 +5,7 @@ class TourSelectorParams:
         self.debug = False
 
 
-class SaTourSelectorParams(TourSelectorParams):
+class SSaTourSelectorParams(TourSelectorParams):
     def __init__(self):
         super().__init__()
         self.initial_temp    = None

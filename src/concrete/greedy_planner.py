@@ -1,23 +1,23 @@
 import copy
 import os
 
-from src.abstract.greedy_solver import GreedySolver
-from src.abstract.planner import Planner
-from src.abstract.planning import Planning
-from src.abstract.planning_scorer import PlanningScorer
-from src.concrete.planning_manager import Manager
+from src.abstract.greedy_solver import IGreedySolver
+from src.abstract.planner import CPlanner
+from src.abstract.planning import CPlanning
+from src.abstract.planning_scorer import CPlanningScorer
+from src.concrete.planning_manager import CManager
 from src.input.planning_input import PlanningInput
 from src.params.constants import CONSULT_TIME, MAX_TIME_PER_DAY
 from src.params.planner_params import PlannerParams
 from src.utils import weighted_choice
 
 
-class GreedyPlanner(Planner, GreedySolver):
+class CGreedyPlanner(CPlanner, IGreedySolver):
     # COST_CORRECTION_BIAS = 3 * SECONDS_PER_HOUR  # ??? random value... 3 hours
 
-    def __init__(self, manager: Manager, input: PlanningInput, params: PlannerParams, scorer: PlanningScorer):
-        Planner.__init__(self, manager, input, params, scorer)
-        GreedySolver.__init__(self)
+    def __init__(self, manager: CManager, input: PlanningInput, params: PlannerParams, scorer: CPlanningScorer):
+        CPlanner.__init__(self, manager, input, params, scorer)
+        IGreedySolver.__init__(self)
 
         self.CNT_ITERATIONS = params.cnt_iterations
         self.KEEP_PERCENT   = params.keep_percent
@@ -61,7 +61,7 @@ class GreedyPlanner(Planner, GreedySolver):
         return avg
 
     def _reset(self):
-        self.current_plan = Planning(self.input.cnt_days, self.input.cnt_cars)
+        self.current_plan = CPlanning(self.input.cnt_days, self.input.cnt_cars)
 
         self.day = 0
         self.car = 0
@@ -104,7 +104,7 @@ class GreedyPlanner(Planner, GreedySolver):
             self.remaining_visits[tour[i]] -= cnt
             assert self.remaining_visits[tour[i]] >= 0
 
-        self.current_plan[self.day][self.car] = Planning.Tour(tour, visits_per_node)
+        self.current_plan[self.day][self.car] = CPlanning.Tour(tour, visits_per_node)
         self._next()
 
     def _next(self):
@@ -192,5 +192,5 @@ class GreedyPlanner(Planner, GreedySolver):
         tours_path = os.path.join(folder, tours_file)
         days_path = os.path.join(folder, days_file)
 
-        Planning.Writer().write_tours_html(self.best_plan, tours_html_path, self.manager)
-        Planning.Writer().write           (self.best_plan, tours_path, days_path, self.manager)
+        CPlanning.CWriter().write_tours_html(self.best_plan, tours_html_path, self.manager)
+        CPlanning.CWriter().write           (self.best_plan, tours_path, days_path, self.manager)

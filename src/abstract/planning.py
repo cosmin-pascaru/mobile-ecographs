@@ -3,7 +3,7 @@ from src import utils
 from src.utils import sec_to_str
 
 
-class Planning:
+class CPlanning:
     class Day:
         def __init__(self, tours_per_day):
             if tours_per_day is None:
@@ -35,7 +35,7 @@ class Planning:
         if days is None or tours_per_day is None:
             return
 
-        self.days = [Planning.Day(tours_per_day) for _ in range(days)]
+        self.days = [CPlanning.Day(tours_per_day) for _ in range(days)]
         """A list of plannings per day (Planning.Day)"""
 
     def __len__(self):
@@ -47,7 +47,7 @@ class Planning:
     def __setitem__(self, key, value):
         self.days[key] = value
 
-    class Writer(metaclass=Singleton):
+    class CWriter(metaclass=Singleton):
         def __init__(self):
             pass
 

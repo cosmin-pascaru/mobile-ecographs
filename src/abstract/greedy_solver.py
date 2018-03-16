@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 
-class GreedySolver(ABC):
+class IGreedySolver(ABC):
     def __init__(self):
         pass
 

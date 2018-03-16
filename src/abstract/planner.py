@@ -1,13 +1,13 @@
 from abc import ABC, abstractmethod
 
-from src.abstract.planning_scorer import PlanningScorer
-from src.concrete.planning_manager import Manager
+from src.abstract.planning_scorer import CPlanningScorer
+from src.concrete.planning_manager import CManager
 from src.input.planning_input import PlanningInput
 from src.params.planner_params import PlannerParams
 
 
-class Planner(ABC):
-    def __init__(self, manager : Manager, input : PlanningInput, params : PlannerParams, scorer : PlanningScorer):
+class CPlanner(ABC):
+    def __init__(self, manager : CManager, input : PlanningInput, params : PlannerParams, scorer : CPlanningScorer):
         self.manager = manager
 
         self.input = input

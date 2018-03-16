@@ -3,16 +3,17 @@ import math
 import random
 
 from old.NatalityDataReader import NatalityDataReader
-from src.abstract.mtsp_solver import MtspSolver
+from src.abstract.mtsp_solver import IMtspSolver
 
 
-class SaMtspSolverParams(object):
-    def __init__(self, initial_temperature = None, cooling_rate = None):
+class SSaMtspSolverParams(object):
+    def __init__(self, initial_temperature=None, cooling_rate=None, debug=False):
         self.initial_temperature = initial_temperature
         self.cooling_rate        = cooling_rate
+        self.debug               = debug
 
 
-class Solution(object):
+class CSolution(object):
     neighbourhood_functions = None
 
     def __init__(self, nr_nodes, nr_tours):
@@ -41,7 +42,7 @@ class Solution(object):
                 circuit_cost += distance_matrix[node_st][node_end]
 
             if circuit_cost > tour_limit:
-                circuit_cost *= SaMtspSolver.TOO_LONG_TOUR_PENALTY
+                circuit_cost *= CSaMtspSolver.TOO_LONG_TOUR_PENALTY
 
             cost += circuit_cost
         return cost
@@ -51,7 +52,7 @@ class Solution(object):
 
         p = random.random()
 
-        for neighbour_f in Solution.neighbour_functions:
+        for neighbour_f in CSolution.neighbour_functions:
             if p < neighbour_f[1]:
                 neighbour_f[0](neighbour)
 
@@ -59,7 +60,7 @@ class Solution(object):
 
     @staticmethod
     def generate_random(nr_nodes, nr_tours):
-        s = Solution(nr_nodes, nr_tours)
+        s = CSolution(nr_nodes, nr_tours)
 
         permutation = list(range(nr_nodes))
         random.shuffle(permutation)
@@ -110,17 +111,17 @@ class Solution(object):
         self.tour_ends[i] = random.randint(left, right)
 
 
-Solution.neighbour_functions = [(Solution.swap2, 0.0),
-                                (Solution.swap2adj, 0.6),
-                                (Solution.swap3, 0.7),
-                                (Solution.change_lengths, 1.0)]
+CSolution.neighbour_functions = [(CSolution.swap2, 0.0),
+                                 (CSolution.swap2adj, 0.6),
+                                 (CSolution.swap3, 0.7),
+                                 (CSolution.change_lengths, 1.0)]
 
 
-class SaMtspSolver(MtspSolver):
+class CSaMtspSolver(IMtspSolver): # TODO: inherit from sa solver
     TOO_LONG_TOUR_PENALTY = 100
 
-    def __init__(self, params: SaMtspSolverParams):
-        super(MtspSolver, self).__init__()
+    def __init__(self, params: SSaMtspSolverParams):
+        super(IMtspSolver, self).__init__()
 
         self.nr_nodes = None
         self.nr_tours = None
@@ -130,6 +131,7 @@ class SaMtspSolver(MtspSolver):
 
         self.initial_temperature = params.initial_temperature
         self.cooling_rate        = params.cooling_rate
+        self.debug               = params.debug
 
         self.avg_time_per_nodes = None
 
@@ -148,7 +150,7 @@ class SaMtspSolver(MtspSolver):
         best_solution = None
         best_cost = float('inf')
 
-        current_solution = Solution.generate_random(self.nr_nodes, self.nr_tours)
+        current_solution = CSolution.generate_random(self.nr_nodes, self.nr_tours)
         current_cost = current_solution.compute_cost(self.distance_matrix, self.tour_limit, self.avg_time_per_nodes)
 
         iteration = 0
@@ -174,7 +176,8 @@ class SaMtspSolver(MtspSolver):
             iteration += 1
             temperature *= 1 - self.cooling_rate
 
-        print('Evaluated solutions: {}'.format(iteration))
-        print('Best cost: {}'.format(best_cost))
+        if self.debug:
+            print('Evaluated solutions: {}'.format(iteration))
+            print('Best cost: {}'.format(best_cost))
 
         return best_solution, best_cost
