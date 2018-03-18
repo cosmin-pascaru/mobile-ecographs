@@ -15,7 +15,7 @@ from src.params.constants import SECONDS_PER_MINUTE, SECONDS_PER_HOUR
 from src.params.manager_params import ManagerParams
 from src.params.planner_params import PlannerParams
 from src.params.planning_scorer_params import PlanningScorerParams
-from src.params.tour_selector_params import TourSelectorParams, DisabledTourSelectorParams
+from src.params.tour_selector_params import CTourSelectorParams, CDisabledTourSelectorParams, CSaTourSelectorParams
 
 seed = random.randint(0, (1 << 30))
 # seed = int(open('data/last_seed.txt', 'r').read().strip())
@@ -56,16 +56,25 @@ inp.distance_matrix = dm
 data.input = inp
 
 # Tour selector
-tour_sel_params = DisabledTourSelectorParams()
-tour_sel_params.debug = True
-tour_sel_params.cnt_iterations = 1000
 
-# tour_sel_params.sa_cooling_rate = 0.01
+USE_SA_TOUR_SELECTOR       = False
+USE_DISABLED_TOUR_SELECTOR = not USE_SA_TOUR_SELECTOR
 
-data.tour_selector_cls = CDisabledTourSelector
-data.tour_selector_params = tour_sel_params
-# data.tour_selector_cls = SaTourSelector
-# data.tour_selector_params = tour_sel_params
+if USE_SA_TOUR_SELECTOR:
+    tour_sel_params = CSaTourSelectorParams()
+    tour_sel_params.debug = True
+    tour_sel_params.sa_params.cooling_rate = 0.01
+
+    data.tour_selector_cls = CSaTourSelector
+    data.tour_selector_params = tour_sel_params
+
+elif USE_DISABLED_TOUR_SELECTOR:
+    tour_sel_params = CDisabledTourSelectorParams()
+    tour_sel_params.debug = True
+    tour_sel_params.cnt_iterations = 1000
+
+    data.tour_selector_cls = CDisabledTourSelector
+    data.tour_selector_params = tour_sel_params
 
 # Planner
 planner_params = PlannerParams()

@@ -4,54 +4,59 @@ from abc import ABC, abstractmethod
 import math
 
 
-class CSaSolver(ABC):
-    MAX_TEMPERATURE = 1000000
+class CSaParams(object):
+    def __init__(self):
+        self.initial_temp = 1000000
+        self.cooling_rate = None
+        self.debug = False
+        self.print_progress_freq = None
+        self.update_best_callback = None
 
-    def __init__(self, print_progress_freq = 1):
-        self.__temperature = None
-        self.__cooling_rate = None
 
-        self.__best_solution = None
-        self.__best_cost = None
+class ISaSolver(ABC):
+    def __init__(self):
+        pass
 
-        self.__print_progress_freq = print_progress_freq
+    def run_sa(self, params : CSaParams):
+        temperature         = params.initial_temp
+        cooling_rate        = params.cooling_rate
+        print_progress_freq = params.print_progress_freq
 
-    def run_sa(self, cooling_rate):
-        self.__temperature = self.MAX_TEMPERATURE
-        self.__cooling_rate = cooling_rate
-
-        self.__best_solution = None
-        self.__best_cost = float('inf')
+        best_solution = None
+        best_cost     = float('inf')
 
         iteration = 0
 
-        current_sol, current_cost = self._get_random_sol()
+        current_sol, current_cost = self._get_initial_sol()
 
-        while self.__temperature > 1:
-
+        while temperature > 1:
             neighbour, neighbour_cost = self._get_random_neighbour(current_sol)
 
             if neighbour_cost < current_cost or \
-                    math.exp((current_cost - neighbour_cost) / self.__temperature) > random.random():
+                    math.exp((current_cost - neighbour_cost) / temperature) > random.random():
 
                 current_sol, current_cost = neighbour, neighbour_cost
 
-                if current_cost < self.__best_cost:
-                    self.__best_solution, self.__best_cost = current_sol, current_cost
+                if current_cost < best_cost:
+                    best_solution, best_cost = current_sol, current_cost
+
+                    if params.update_best_callback:
+                        params.update_best_callback(best_solution)
 
             iteration += 1
-            self.__temperature *= 1 - self.__cooling_rate
+            temperature *= 1 - cooling_rate
 
-            if iteration % self.__print_progress_freq == 0:
-                print('Best cost so far: {}, temperature: {}'.format(self.__best_cost, self.__temperature))
+            if params.debug and print_progress_freq and iteration % print_progress_freq == 0:
+                print('Best cost so far: {}, temperature: {}'.format(best_cost, temperature))
 
-        print('Evaluated solutions: {}'.format(iteration))
-        print('Best cost: {}'.format(self.__best_cost))
+        if params.debug:
+            print('Evaluated solutions: {}'.format(iteration))
+            print('Best cost: {}'.format(best_cost))
 
-        return self.__best_solution, self.__best_cost
+        return best_solution, best_cost
 
     @abstractmethod
-    def _get_random_sol(self) -> tuple:
+    def _get_initial_sol(self) -> tuple:
         """Returns a tuple (sol, cost)"""
         pass
 

@@ -3,25 +3,27 @@ import random
 import copy
 
 from src.abstract.planner import CPlanner
-from src.abstract.sa_solver import CSaSolver
+from src.abstract.sa_solver import ISaSolver
 from src.abstract.tour_selector import CTourSelector
 from src.concrete.planning_manager import CManager
 from src.params.constants import MAX_TIME_ON_ROAD
-from src.params.tour_selector_params import TourSelectorParams, SSaTourSelectorParams
+from src.params.tour_selector_params import CTourSelectorParams, CSaTourSelectorParams
 from src.utils import SECONDS_PER_HOUR
 
 
-class CSaTourSelector(CTourSelector, CSaSolver):
-    def __init__(self, manager: CManager, tours, params: SSaTourSelectorParams, planner : CPlanner):
-        CTourSelector.__init__(self, manager, tours, params, planner)
-        CSaSolver.__init__(self, params.sa_cooling_rate)
+class CSaTourSelector(CTourSelector, ISaSolver):
+    def __init__(self, manager: CManager, tours, params: CSaTourSelectorParams, planner : CPlanner):
+        CTourSelector.__init__(self, manager, tours, params.tour_sel_params, planner)
+        ISaSolver    .__init__(self)
 
+        self.params = params
         self.all = None
 
-    def run(self):
+    def run_tour_selector(self):
         self._filter_too_long_tours()
         self.all = [1 for _ in self.tours]
-        self.run_sa(self.params.sa_cooling_rate)
+
+        ISaSolver.run_sa(self, self.params.sa_params)
 
     def _existing_tour_indexes(self, sol):
         return tuple(i for i, x in enumerate(sol) if x)
@@ -29,7 +31,7 @@ class CSaTourSelector(CTourSelector, CSaSolver):
     def _missing_tour_indexes(self, sol):
         return tuple(i for i, x in enumerate(sol) if x)
 
-    def _get_random_sol(self) -> tuple:
+    def _get_initial_sol(self) -> tuple:
         sol = [random.choice((True, False)) for _ in self.all]
 
         while sol.count(True) == 0:

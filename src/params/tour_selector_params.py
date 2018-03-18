@@ -1,18 +1,19 @@
+from src.abstract.sa_solver import CSaParams
 
-class TourSelectorParams:
+
+class CTourSelectorParams(object):
     def __init__(self):
         # General params
         self.debug = False
 
 
-class SSaTourSelectorParams(TourSelectorParams):
+class CSaTourSelectorParams(object):
     def __init__(self):
-        super().__init__()
-        self.initial_temp    = None
-        self.sa_cooling_rate = None
+        self.tour_sel_params = CTourSelectorParams()
+        self.sa_params       = CSaParams()
 
 
-class DisabledTourSelectorParams(TourSelectorParams):
+class CDisabledTourSelectorParams(CTourSelectorParams):
     def __init__(self):
         super().__init__()
         self.cnt_iterations = None

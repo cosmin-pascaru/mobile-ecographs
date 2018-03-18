@@ -37,7 +37,7 @@ class CManager:
                                                            planner=self.planner)
 
     def run(self):
-        self.tour_selector.run()
+        self.tour_selector.run_tour_selector()
 
     def get_distance(self, x, y):
         return self.input.distance_matrix[x][y]

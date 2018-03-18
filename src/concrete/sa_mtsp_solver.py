@@ -4,9 +4,10 @@ import random
 
 from old.NatalityDataReader import NatalityDataReader
 from src.abstract.mtsp_solver import IMtspSolver
+from src.params.constants import MAX_TIME_ON_ROAD
 
 
-class SSaMtspSolverParams(object):
+class CSaMtspSolverParams(object):
     def __init__(self, initial_temperature=None, cooling_rate=None, debug=False):
         self.initial_temperature = initial_temperature
         self.cooling_rate        = cooling_rate
@@ -117,17 +118,15 @@ CSolution.neighbour_functions = [(CSolution.swap2, 0.0),
                                  (CSolution.change_lengths, 1.0)]
 
 
-class CSaMtspSolver(IMtspSolver): # TODO: inherit from sa solver
+class CSaMtspSolver(IMtspSolver):  # TODO: inherit from sa solver
     TOO_LONG_TOUR_PENALTY = 100
 
-    def __init__(self, params: SSaMtspSolverParams):
+    def __init__(self, params: CSaMtspSolverParams):
         super(IMtspSolver, self).__init__()
 
         self.nr_nodes = None
         self.nr_tours = None
         self.distance_matrix = None
-
-        self.tour_limit = None
 
         self.initial_temperature = params.initial_temperature
         self.cooling_rate        = params.cooling_rate
@@ -135,7 +134,7 @@ class CSaMtspSolver(IMtspSolver): # TODO: inherit from sa solver
 
         self.avg_time_per_nodes = None
 
-    def solve(self, distance_matrix, nr_tours, time_limit=float('inf'), tour_limit=float('inf')):
+    def solve(self, distance_matrix, nr_tours, time_limit=float('inf')):
 
         if len(distance_matrix) != len(distance_matrix[0]):
             raise ValueError('Matrix must be square!')
@@ -145,13 +144,12 @@ class CSaMtspSolver(IMtspSolver): # TODO: inherit from sa solver
         self.nr_nodes = len(distance_matrix)
         self.nr_tours = nr_tours
         self.distance_matrix = distance_matrix
-        self.tour_limit = tour_limit
 
         best_solution = None
         best_cost = float('inf')
 
         current_solution = CSolution.generate_random(self.nr_nodes, self.nr_tours)
-        current_cost = current_solution.compute_cost(self.distance_matrix, self.tour_limit, self.avg_time_per_nodes)
+        current_cost = current_solution.compute_cost(self.distance_matrix, MAX_TIME_ON_ROAD, self.avg_time_per_nodes)
 
         iteration = 0
 
@@ -159,7 +157,7 @@ class CSaMtspSolver(IMtspSolver): # TODO: inherit from sa solver
         while temperature > 1:
 
             neighbour, neighbour_cost = current_solution.get_random_neighbour_and_cost(self.distance_matrix,
-                                                                                       self.tour_limit,
+                                                                                       MAX_TIME_ON_ROAD,
                                                                                        self.avg_time_per_nodes)
 
             if neighbour_cost < current_cost or math.exp(

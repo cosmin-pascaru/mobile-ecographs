@@ -1,12 +1,13 @@
-from src.concrete.sa_mtsp_solver import CSaMtspSolver, SSaMtspSolverParams
+from src.concrete.sa_mtsp_solver import CSaMtspSolver, CSaMtspSolverParams
 
 
-class ToursFinderParams(object):
+class CToursFinderParams(object):
     def __init__(self):
-        self.min_cnt_tours   = None
-        self.output_file     = None
-        self.times_filename  = 'data/times.txt'
-        self.places_filename = 'data/lista_comune.txt'
+        self.min_cnt_tours     = None
+        self.cnt_tours_per_sol = None
+        self.output_file       = None
+        self.times_filename    = 'data/times.txt'
+        self.places_filename   = 'data/lista_comune.txt'
 
 
 class CToursFinder:
@@ -14,12 +15,13 @@ class CToursFinder:
         pass
 
     def compute_tours(self,
-                      tours_finder_params : ToursFinderParams,
-                      mtsp_solver_params  : SSaMtspSolverParams):
+                      tours_finder_params : CToursFinderParams,
+                      mtsp_solver_params  : CSaMtspSolverParams):
 
-        times_filename  = tours_finder_params.times_filename
-        places_filename = tours_finder_params.places_filename
-        min_cnt_tours   = tours_finder_params.min_cnt_tours
+        times_filename    = tours_finder_params.times_filename
+        places_filename   = tours_finder_params.places_filename
+        min_cnt_tours     = tours_finder_params.min_cnt_tours
+        cnt_tours_per_sol = tours_finder_params.cnt_tours_per_sol
 
         with open(times_filename, 'r') as f:
             times = eval(f.read())
@@ -36,7 +38,7 @@ class CToursFinder:
         all_tours = []
 
         while len(all_tours) < min_cnt_tours:
-            sol, cost = solver.solve(times, 25, tour_limit=tour_limit)
+            sol, cost = solver.solve(times, cnt_tours_per_sol)
 
             tours = sol.get_tours()
             tour_costs = [sum(times[x][y] for x, y in zip(tour[:-1], tour[1:])) for tour in tours]
