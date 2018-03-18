@@ -9,13 +9,13 @@ class ToursFinderParams(object):
         self.places_filename = 'data/lista_comune.txt'
 
 
-class ToursFinder:
+class CToursFinder:
     def __init__(self):
         pass
 
     def compute_tours(self,
                       tours_finder_params : ToursFinderParams,
-                      mtsp_solver_params  : SSaMtspSolverParams, ):
+                      mtsp_solver_params  : SSaMtspSolverParams):
 
         times_filename  = tours_finder_params.times_filename
         places_filename = tours_finder_params.places_filename
@@ -28,8 +28,8 @@ class ToursFinder:
         #     lines = places_file.readlines()
         #     lines = [" ".join(line.split()[1:]) for line in lines]
 
-        hours_on_road_limit = 8
-        tour_limit = 60 * 60 * hours_on_road_limit
+        # hours_on_road_limit = 8
+        # tour_limit = 60 * 60 * hours_on_road_limit
 
         solver = CSaMtspSolver(mtsp_solver_params)
 

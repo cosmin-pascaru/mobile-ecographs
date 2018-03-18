@@ -3,8 +3,11 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# HTML output
-*.html
+# Temp Output
+data/html/
+data/plans/
+data/last_seed.txt
+data/googleapi_key.txt
 
 # PyCharm
 .idea/
