@@ -8,14 +8,14 @@ from src.abstract.planning_scorer import CPlanningScorer
 from src.concrete.planning_manager import CManager
 from src.input.planning_input import PlanningInput
 from src.params.constants import CONSULT_TIME, MAX_TIME_PER_DAY
-from src.params.planner_params import PlannerParams
+from src.params.planner_params import CPlannerParams
 from src.utils import weighted_choice
 
 
 class CGreedyPlanner(CPlanner, IGreedySolver):
     # COST_CORRECTION_BIAS = 3 * SECONDS_PER_HOUR  # ??? random value... 3 hours
 
-    def __init__(self, manager: CManager, input: PlanningInput, params: PlannerParams, scorer: CPlanningScorer):
+    def __init__(self, manager: CManager, input: PlanningInput, params: CPlannerParams, scorer: CPlanningScorer):
         CPlanner.__init__(self, manager, input, params, scorer)
         IGreedySolver.__init__(self)
 
@@ -181,16 +181,16 @@ class CGreedyPlanner(CPlanner, IGreedySolver):
         if not self.params.write_best_plan:
             return
 
-        folder = 'data/plans'
-        html_folder = 'data/html'
+        folder          = 'data/plans'
+        html_folder     = 'data/html'
         tours_html_file = 'tours_{}.html'.format(self.best_cost)
 
         tours_file = 'tours_{}.txt'.format(self.best_cost)
-        days_file  = 'days_{}.txt'.format(self.best_cost)
+        days_file  = 'days_{}.txt' .format(self.best_cost)
 
-        tours_html_path = os.path.join(html_folder, tours_html_file)
-        tours_path = os.path.join(folder, tours_file)
-        days_path = os.path.join(folder, days_file)
+        tours_html_path = os.path.join( html_folder , tours_html_file )
+        tours_path      = os.path.join( folder      , tours_file      )
+        days_path       = os.path.join( folder      , days_file       )
 
         CPlanning.CWriter().write_tours_html(self.best_plan, tours_html_path, self.manager)
         CPlanning.CWriter().write           (self.best_plan, tours_path, days_path, self.manager)

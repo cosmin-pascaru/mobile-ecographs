@@ -1,17 +1,23 @@
 import copy
-import math
 import random
 
 from old.NatalityDataReader import NatalityDataReader
 from src.abstract.mtsp_solver import IMtspSolver
+from src.abstract.sa_solver import CSaParams, ISaSolver
 from src.params.constants import MAX_TIME_ON_ROAD
 
 
+class CMtspSolverParams(object):
+    def __init__(self):
+        self.distance_matrix = None
+        self.nr_mtsp_tours   = None
+        self.tour_time_limit = None
+
+
 class CSaMtspSolverParams(object):
-    def __init__(self, initial_temperature=None, cooling_rate=None, debug=False):
-        self.initial_temperature = initial_temperature
-        self.cooling_rate        = cooling_rate
-        self.debug               = debug
+    def __init__(self):
+        self.sa_params   = CSaParams()
+        self.mtsp_params = CMtspSolverParams()
 
 
 class CSolution(object):
@@ -30,14 +36,13 @@ class CSolution(object):
         return [[0] + self.permutation[start:end] + [0] for start, end in
                 zip([0] + self.tour_ends[:-1], self.tour_ends)]
 
-    def compute_cost(self, distance_matrix, tour_limit, bonuses):
+    def compute_cost(self, distance_matrix, tour_limit):
         cost = 0
 
         for tour_st, tour_end in zip([0] + self.tour_ends[:-1], self.tour_ends):
             circuit = [0] + self.permutation[tour_st:tour_end] + [0]
 
             circuit_cost = 0
-            # circuit_cost = sum(bonuses[i] for i in self.permutation[tour_st:tour_end] if i > 4)
 
             for node_st, node_end in zip(circuit[:-1], circuit[1:]):
                 circuit_cost += distance_matrix[node_st][node_end]
@@ -48,7 +53,7 @@ class CSolution(object):
             cost += circuit_cost
         return cost
 
-    def get_random_neighbour_and_cost(self, distance_matrix, tour_limit, bonuses):
+    def get_random_neighbour_and_cost(self, distance_matrix, tour_limit):
         neighbour = copy.deepcopy(self)
 
         p = random.random()
@@ -57,7 +62,7 @@ class CSolution(object):
             if p < neighbour_f[1]:
                 neighbour_f[0](neighbour)
 
-        return neighbour, neighbour.compute_cost(distance_matrix, tour_limit, bonuses)
+        return neighbour, neighbour.compute_cost(distance_matrix, tour_limit)
 
     @staticmethod
     def generate_random(nr_nodes, nr_tours):
@@ -112,70 +117,41 @@ class CSolution(object):
         self.tour_ends[i] = random.randint(left, right)
 
 
-CSolution.neighbour_functions = [(CSolution.swap2, 0.0),
-                                 (CSolution.swap2adj, 0.6),
-                                 (CSolution.swap3, 0.7),
+CSolution.neighbour_functions = [(CSolution.swap2         , 0.0),
+                                 (CSolution.swap2adj      , 0.6),
+                                 (CSolution.swap3         , 0.7),
                                  (CSolution.change_lengths, 1.0)]
 
 
-class CSaMtspSolver(IMtspSolver):  # TODO: inherit from sa solver
+class CSaMtspSolver(IMtspSolver, ISaSolver):
     TOO_LONG_TOUR_PENALTY = 100
 
-    def __init__(self, params: CSaMtspSolverParams):
+    def __init__(self):
         super(IMtspSolver, self).__init__()
 
         self.nr_nodes = None
         self.nr_tours = None
         self.distance_matrix = None
+        self.tour_time_limit = None
 
-        self.initial_temperature = params.initial_temperature
-        self.cooling_rate        = params.cooling_rate
-        self.debug               = params.debug
+    def run_mtsp(self, params: CSaMtspSolverParams):
+        self.distance_matrix = params.mtsp_params.distance_matrix
+        self.tour_time_limit = params.mtsp_params.tour_time_limit
+        self.nr_tours = params.mtsp_params.nr_mtsp_tours
+        self.nr_nodes = len(self.distance_matrix)
 
-        self.avg_time_per_nodes = None
-
-    def solve(self, distance_matrix, nr_tours, time_limit=float('inf')):
-
-        if len(distance_matrix) != len(distance_matrix[0]):
+        if len(self.distance_matrix) != len(self.distance_matrix[0]):
             raise ValueError('Matrix must be square!')
 
-        self.avg_time_per_nodes = [i[1] * 30 * 60 / 12 for i in NatalityDataReader().read()]
+        best_sol, best_cost = ISaSolver.run_sa(self, params.sa_params)
 
-        self.nr_nodes = len(distance_matrix)
-        self.nr_tours = nr_tours
-        self.distance_matrix = distance_matrix
+        return best_sol, best_cost
 
-        best_solution = None
-        best_cost = float('inf')
+    def _get_initial_sol(self):
+        sol = CSolution.generate_random(self.nr_nodes, self.nr_tours)
+        cost = sol.compute_cost(self.distance_matrix, MAX_TIME_ON_ROAD)
 
-        current_solution = CSolution.generate_random(self.nr_nodes, self.nr_tours)
-        current_cost = current_solution.compute_cost(self.distance_matrix, MAX_TIME_ON_ROAD, self.avg_time_per_nodes)
+        return sol, cost
 
-        iteration = 0
-
-        temperature = self.initial_temperature
-        while temperature > 1:
-
-            neighbour, neighbour_cost = current_solution.get_random_neighbour_and_cost(self.distance_matrix,
-                                                                                       MAX_TIME_ON_ROAD,
-                                                                                       self.avg_time_per_nodes)
-
-            if neighbour_cost < current_cost or math.exp(
-                    (current_cost - neighbour_cost) / temperature) > random.random():
-
-                current_solution, current_cost = neighbour, neighbour_cost
-
-                if current_cost < best_cost:
-                    best_solution, best_cost = current_solution, current_cost
-
-            if iteration % 20000 == 0:
-                print('Best cost so far: {}, temperature: {}'.format(best_cost, temperature))
-
-            iteration += 1
-            temperature *= 1 - self.cooling_rate
-
-        if self.debug:
-            print('Evaluated solutions: {}'.format(iteration))
-            print('Best cost: {}'.format(best_cost))
-
-        return best_solution, best_cost
+    def _get_random_neighbour(self, sol: CSolution):
+        return sol.get_random_neighbour_and_cost(self.distance_matrix, MAX_TIME_ON_ROAD)

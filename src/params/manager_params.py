@@ -1,4 +1,4 @@
-class ManagerParams:
+class CManagerParams:
     def __init__(self):
         self.debug = False
         self.maps_api_key = None

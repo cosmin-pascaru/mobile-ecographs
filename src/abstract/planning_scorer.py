@@ -5,11 +5,11 @@ import copy
 from src.abstract.planning import CPlanning
 from src.concrete.planning_manager import CManager
 from src.input.planning_input import PlanningInput
-from src.params.planning_scorer_params import PlanningScorerParams
+from src.params.planning_scorer_params import CPlanningScorerParams
 
 
 class CPlanningScorer(ABC):
-    def __init__(self, manager:CManager, params: PlanningScorerParams, input: PlanningInput):
+    def __init__(self, manager:CManager, params: CPlanningScorerParams, input: PlanningInput):
         self.manager = manager
         self.params = params
         self.input = input

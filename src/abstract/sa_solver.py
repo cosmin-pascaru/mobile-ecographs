@@ -6,10 +6,10 @@ import math
 
 class CSaParams(object):
     def __init__(self):
-        self.initial_temp = 1000000
-        self.cooling_rate = None
-        self.debug = False
-        self.print_progress_freq = None
+        self.initial_temp         = 1000000
+        self.debug                = False
+        self.cooling_rate         = None
+        self.print_progress_freq  = None
         self.update_best_callback = None
 
 
@@ -41,17 +41,17 @@ class ISaSolver(ABC):
                     best_solution, best_cost = current_sol, current_cost
 
                     if params.update_best_callback:
-                        params.update_best_callback(best_solution)
+                        params.update_best_callback(best_solution, best_cost)
 
-            iteration += 1
+            iteration   += 1
             temperature *= 1 - cooling_rate
 
             if params.debug and print_progress_freq and iteration % print_progress_freq == 0:
                 print('Best cost so far: {}, temperature: {}'.format(best_cost, temperature))
 
         if params.debug:
-            print('Evaluated solutions: {}'.format(iteration))
-            print('Best cost: {}'.format(best_cost))
+            print('SA Evaluated solutions: {}'.format(iteration))
+            print('SA Best cost: {}'.format(best_cost))
 
         return best_solution, best_cost
 

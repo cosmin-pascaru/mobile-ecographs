@@ -8,13 +8,13 @@ from src.abstract.tour_selector import CTourSelector
 from src.concrete.disabled_tour_selector import CDisabledTourSelector
 from src.concrete.greedy_planner import CGreedyPlanner
 from src.concrete.planning_manager import CManager
-from src.concrete.simple_planning_scorer import SimplePlanningScorer
+from src.concrete.simple_planning_scorer import CSimplePlanningScorer
 from src.concrete.sa_tour_selector import CSaTourSelector
 from src.input.planning_input import PlanningInput
 from src.params.constants import SECONDS_PER_MINUTE, SECONDS_PER_HOUR
-from src.params.manager_params import ManagerParams
-from src.params.planner_params import PlannerParams
-from src.params.planning_scorer_params import PlanningScorerParams
+from src.params.manager_params import CManagerParams
+from src.params.planner_params import CPlannerParams
+from src.params.planning_scorer_params import CPlanningScorerParams
 from src.params.tour_selector_params import CTourSelectorParams, CDisabledTourSelectorParams, CSaTourSelectorParams
 
 seed = random.randint(0, (1 << 30))
@@ -77,7 +77,7 @@ elif USE_DISABLED_TOUR_SELECTOR:
     data.tour_selector_params = tour_sel_params
 
 # Planner
-planner_params = PlannerParams()
+planner_params = CPlannerParams()
 planner_params.debug = False
 planner_params.write_best_plan = True
 planner_params.cnt_iterations = 1
@@ -87,14 +87,14 @@ data.planner_cls = CGreedyPlanner
 data.planner_params = planner_params
 
 # Scorer
-scorer_params = PlanningScorerParams()
+scorer_params = CPlanningScorerParams()
 scorer_params.debug = False
 
-data.scorer_cls = SimplePlanningScorer
+data.scorer_cls = CSimplePlanningScorer
 data.scorer_params = scorer_params
 
 # Manager params
-manager_params = ManagerParams()
+manager_params = CManagerParams()
 manager_params.debug = False
 manager_params.maps_api_key = open('data/googleapi_key.txt', 'r').read().strip()
 manager_params.tour_template_file = 'data/html/templates/tour_template.html'

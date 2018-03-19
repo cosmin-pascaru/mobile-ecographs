@@ -6,6 +6,6 @@ class IMtspSolver(ABC):
         pass
 
     @abstractmethod
-    def solve(self, distance_matrix, nr_tours, time_limit):
+    def run_mtsp(self, params):
         pass
 
