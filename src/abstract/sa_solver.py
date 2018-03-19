@@ -5,12 +5,18 @@ import math
 
 
 class CSaParams(object):
-    def __init__(self):
-        self.initial_temp         = 1000000
-        self.debug                = False
-        self.cooling_rate         = None
-        self.print_progress_freq  = None
-        self.update_best_callback = None
+    def __init__(self,
+                 debug                = False,
+                 cooling_rate         = None,
+                 print_progress_freq  = None,
+                 update_best_callback = None,
+                 initial_temp         = 1000000):
+
+        self.initial_temp         = initial_temp
+        self.debug                = debug
+        self.cooling_rate         = cooling_rate
+        self.print_progress_freq  = print_progress_freq
+        self.update_best_callback = update_best_callback
 
 
 class ISaSolver(ABC):

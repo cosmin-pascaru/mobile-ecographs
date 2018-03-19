@@ -1,29 +1,20 @@
+from src.abstract.sa_solver import CSaParams
 from src.concrete.tours_finder import CToursFinder, CToursFinderParams
-from src.concrete.sa_mtsp_solver import CSaMtspSolverParams, CSaMtspSolver
+from src.concrete.sa_mtsp_solver import CSaMtspSolverParams, CSaMtspSolver, CMtspSolverParams
 from src.concrete.tours_writer import CToursWriter
 from src.params.constants import MAX_TIME_ON_ROAD
 
 with open('data/times.txt', 'r') as f:
     distance_matrix = eval(f.read())
 
-tours_finder_params = CToursFinderParams()
+tours_finder_params = CToursFinderParams(distance_matrix, min_cnt_tours = 20, debug = True)
+mtsp_params         = CMtspSolverParams(distance_matrix, nr_mtsp_tours = 5, tour_time_limit = MAX_TIME_ON_ROAD)
+sa_params           = CSaParams(cooling_rate = 0.001, debug = True, print_progress_freq = None)
 
-tours_finder_params.distance_matrix = distance_matrix
-tours_finder_params.min_cnt_tours = 20
-tours_finder_params.debug = True
+sa_mtsp_solver        = CSaMtspSolver()
+sa_mtsp_solver_params = CSaMtspSolverParams(sa_params=sa_params, mtsp_params=mtsp_params)
 
-mtsp_solver        = CSaMtspSolver()
-mtsp_solver_params = CSaMtspSolverParams()
-
-mtsp_solver_params.mtsp_params.distance_matrix = distance_matrix
-mtsp_solver_params.mtsp_params.tour_time_limit = MAX_TIME_ON_ROAD
-mtsp_solver_params.mtsp_params.nr_mtsp_tours   = 5
-
-mtsp_solver_params.sa_params.debug               = True
-mtsp_solver_params.sa_params.print_progress_freq = None
-mtsp_solver_params.sa_params.cooling_rate        = 0.001
-
-tours = CToursFinder().compute_tours(tours_finder_params, mtsp_solver, mtsp_solver_params)
+tours = CToursFinder().compute_tours(tours_finder_params, sa_mtsp_solver, sa_mtsp_solver_params)
 
 # CToursWriter().write_plain(tours, 'tmp.txt', 'a')
 

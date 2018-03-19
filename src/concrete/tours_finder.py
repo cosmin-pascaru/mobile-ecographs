@@ -4,10 +4,10 @@ from src.params.constants import MAX_TIME_ON_ROAD
 
 
 class CToursFinderParams(object):
-    def __init__(self):
-        self.min_cnt_tours   = None
-        self.distance_matrix = None
-        self.debug           = False
+    def __init__(self, distance_matrix=None, min_cnt_tours=None, debug=False):
+        self.distance_matrix = distance_matrix
+        self.min_cnt_tours   = min_cnt_tours
+        self.debug           = debug
 
 
 class CToursFinder:

@@ -8,16 +8,16 @@ from src.params.constants import MAX_TIME_ON_ROAD
 
 
 class CMtspSolverParams(object):
-    def __init__(self):
-        self.distance_matrix = None
-        self.nr_mtsp_tours   = None
-        self.tour_time_limit = None
+    def __init__(self, distance_matrix=None, nr_mtsp_tours=None, tour_time_limit=None):
+        self.distance_matrix = distance_matrix
+        self.nr_mtsp_tours   = nr_mtsp_tours
+        self.tour_time_limit = tour_time_limit
 
 
 class CSaMtspSolverParams(object):
-    def __init__(self):
-        self.sa_params   = CSaParams()
-        self.mtsp_params = CMtspSolverParams()
+    def __init__(self, sa_params : CSaParams = CSaParams(), mtsp_params : CMtspSolverParams = CMtspSolverParams()):
+        self.sa_params   = sa_params
+        self.mtsp_params = mtsp_params
 
 
 class CSolution(object):
