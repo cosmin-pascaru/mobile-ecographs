@@ -3,7 +3,18 @@ from src import utils
 from src.utils import sec_to_str
 
 
+class CTour:
+    def __init__(self, locations=None, visits_per_location=None):
+        self.locations = locations
+        self.visits_per_loc = visits_per_location
+
+
 class CPlanning:
+    def __init__(self):
+        self.tours = None
+
+
+class CFullPlanning:
     class Day:
         def __init__(self, tours_per_day):
             if tours_per_day is None:
@@ -35,7 +46,7 @@ class CPlanning:
         if days is None or tours_per_day is None:
             return
 
-        self.days = [CPlanning.Day(tours_per_day) for _ in range(days)]
+        self.days = [CFullPlanning.Day(tours_per_day) for _ in range(days)]
         """A list of plannings per day (Planning.Day)"""
 
     def __len__(self):
@@ -79,6 +90,7 @@ class CPlanning:
         def write(self, planning, tours_file, days_file, manager):
             unique_tours = manager.compute_unique_tours(planning)
 
+            # TODO: uncomment
             # self.write_tours(planning, tours_file, unique_tours, manager)
             # self.write_days(planning, days_file, unique_tours, manager)
 

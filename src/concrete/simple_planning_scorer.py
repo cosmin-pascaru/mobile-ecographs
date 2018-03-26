@@ -1,23 +1,39 @@
 import copy
 
-from src.abstract.planning import CPlanning
+from src.abstract.planning import CFullPlanning, CPlanning
 from src.abstract.planning_scorer import CPlanningScorer
 from src.concrete.planning_manager import CManager
-from src.input.planning_input import PlanningInput
+from src.input.planning_input import CPlanningInput
 from src.params.constants import CONSULT_TIME
 from src.params.planning_scorer_params import CPlanningScorerParams
 
 
 class CSimplePlanningScorer (CPlanningScorer):
-    NOT_VISITED_COST = 10000000
-    CAR_COST         = 10000
-
-    def __init__(self, manager:CManager, params: CPlanningScorerParams, input: PlanningInput):
+    def __init__(self, manager: CManager, params: CPlanningScorerParams, input: CPlanningInput):
         super().__init__(manager, params, input)
 
         self.remaining_visits = None
 
     def compute_cost(self, planning: CPlanning):
+        self._init_remaining_visits()
+
+        time_on_road     = 0
+        time_on_consults = 0
+
+        for tour in planning.tours:
+            locations      = tour.locations
+            visits_per_loc = tour.visits_per_loc
+
+            # time_on_road     += self.manager.compute_tour_distance(locations, visits_per_loc)
+            time_on_consults += sum(visits_per_loc) * CONSULT_TIME
+
+        cost = 0
+        cost += len(planning.tours) * self.params.tour_cost
+        cost += time_on_road * self.params.road_cost_factor
+        cost += time_on_consults * CONSULT_TIME
+        return cost
+
+    def compute_cost_full(self, planning: CFullPlanning):
         self._init_remaining_visits()
 
         time_on_road = 0
@@ -43,9 +59,9 @@ class CSimplePlanningScorer (CPlanningScorer):
         cnt_not_visited = sum(self.remaining_visits)
 
         cost  = 0
-        cost += cnt_not_visited * self.NOT_VISITED_COST
-        cost += max_cars * self.CAR_COST
-        cost += time_on_road
+        cost += cnt_not_visited * self.params.not_visited_cost
+        cost += max_cars * self.params.car_cost
+        cost += time_on_road * self.params.road_cost_factor
 
         if self.params.debug:
             print('cnt_not_visited = {}'.format(cnt_not_visited))

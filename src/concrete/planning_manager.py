@@ -1,4 +1,4 @@
-from src.abstract.planning import CPlanning
+from src.abstract.planning import CFullPlanning
 from src.concrete.maps_url import CMapsUrlConverter
 
 
@@ -59,7 +59,7 @@ class CManager:
     def get_embed_url(self, tour):
         return CMapsUrlConverter().generate_embed(self.params.maps_api_key, (self.input.places_names[i] + self.input.places_suffix for i in tour))
 
-    def compute_unique_tours(self, planning : CPlanning):
+    def compute_unique_tours(self, planning : CFullPlanning):
         unique_tours = {}
         for day in planning.days:
             if day is None:

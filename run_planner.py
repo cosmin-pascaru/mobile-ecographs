@@ -10,7 +10,7 @@ from src.concrete.greedy_planner import CGreedyPlanner
 from src.concrete.planning_manager import CManager
 from src.concrete.simple_planning_scorer import CSimplePlanningScorer
 from src.concrete.sa_tour_selector import CSaTourSelector
-from src.input.planning_input import PlanningInput
+from src.input.planning_input import CPlanningInput
 from src.params.constants import SECONDS_PER_MINUTE, SECONDS_PER_HOUR
 from src.params.manager_params import CManagerParams
 from src.params.planner_params import CPlannerParams
@@ -33,7 +33,7 @@ tours = list(map(lambda line: list(map(int, line.split())), open('data/tours/goo
 data.tours = tours
 
 # Input
-inp = PlanningInput()
+inp = CPlanningInput()
 
 places_names = tuple(map(lambda line: (' '.join(line.split()[1:])).title(), open('data/lista_comune.txt').readlines()))
 places_suffix = ', Iasi, Romania'
