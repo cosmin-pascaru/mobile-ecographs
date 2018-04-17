@@ -7,17 +7,18 @@ from src.params.planner_params import CPlannerParams
 
 
 class CPlanner(ABC):
-    def __init__(self, manager : CManager, input : CPlanningInput, params : CPlannerParams, scorer : CPlanningScorer):
+    def __init__(self, manager : CManager, input : CPlanningInput, params : CPlannerParams, scorer : CPlanningScorer, new_planning_callback):
         self.manager = manager
 
         self.input = input
         self.params = params
         self.scorer = scorer
-        self.tours = None
+        self.new_planning_callback = new_planning_callback
 
+        self.tours = None
         self.best_plan = None
         self.best_cost = None
 
     @abstractmethod
-    def compute_cost(self, tours) -> float:
+    def run_planner(self, tours) -> float:
         pass

@@ -57,4 +57,4 @@ class CSaTourSelector(CTourSelector, ISaSolver):
 
     def _compute_cost(self, sol):
         tours = [self.tours[i] for i in self._existing_tour_indexes(sol)]
-        return self.planner.compute_cost(tours)
+        return self.planner.run_planner(tours)

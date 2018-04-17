@@ -17,5 +17,5 @@ class CDisabledTourSelector(CTourSelector):
         all_tours = [self.tours[i] for i in range(len(self.tours))]
 
         for iter_idx in range(self.params.cnt_iterations):
-            self.planner.compute_cost(all_tours)
+            self.planner.run_planner(all_tours)
 

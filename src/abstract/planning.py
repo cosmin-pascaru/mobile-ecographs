@@ -11,7 +11,7 @@ class CTour:
 
 class CPlanning:
     def __init__(self):
-        self.tours = None
+        self.tours = []
 
 
 class CFullPlanning:

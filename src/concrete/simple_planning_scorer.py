@@ -24,13 +24,21 @@ class CSimplePlanningScorer (CPlanningScorer):
             locations      = tour.locations
             visits_per_loc = tour.visits_per_loc
 
-            # time_on_road     += self.manager.compute_tour_distance(locations, visits_per_loc)
+            time_on_road     += self.manager.compute_tour_distance(locations, visits_per_loc)
             time_on_consults += sum(visits_per_loc) * CONSULT_TIME
 
+        nr_tours = len(planning.tours)
+
         cost = 0
-        cost += len(planning.tours) * self.params.tour_cost
-        cost += time_on_road * self.params.road_cost_factor
-        cost += time_on_consults * CONSULT_TIME
+        cost += nr_tours         * self.params.tour_cost
+        cost += time_on_road     * self.params.road_cost_factor
+        cost += time_on_consults * self.params.consult_time_factor
+
+        if self.params.debug:
+            print('time_on_road:    ', time_on_road    )
+            print('time_on_consults:', time_on_consults)
+            print('nr_tours:        ', nr_tours        )
+
         return cost
 
     def compute_cost_full(self, planning: CFullPlanning):

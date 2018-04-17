@@ -1,9 +1,8 @@
 import copy
 import os
 
-from src.abstract.greedy_solver import IGreedySolver
 from src.abstract.planner import CPlanner
-from src.abstract.planning import CFullPlanning
+from src.abstract.planning import CFullPlanning, CPlanning, CTour
 from src.abstract.planning_scorer import CPlanningScorer
 from src.concrete.planning_manager import CManager
 from src.input.planning_input import CPlanningInput
@@ -12,28 +11,21 @@ from src.params.planner_params import CPlannerParams
 from src.utils import weighted_choice
 
 
-class CGreedyPlanner(CPlanner, IGreedySolver):
-    # COST_CORRECTION_BIAS = 3 * SECONDS_PER_HOUR  # ??? random value... 3 hours
+class CGreedyPlanner(CPlanner):
+    def __init__(self, manager: CManager, input: CPlanningInput, params: CPlannerParams, scorer: CPlanningScorer, new_plan_callback):
+        CPlanner.__init__(self, manager, input, params, scorer, new_plan_callback)
 
-    def __init__(self, manager: CManager, input: CPlanningInput, params: CPlannerParams, scorer: CPlanningScorer):
-        CPlanner.__init__(self, manager, input, params, scorer)
-        IGreedySolver.__init__(self)
-
-        self.CNT_ITERATIONS = params.cnt_iterations
-        self.KEEP_PERCENT   = params.keep_percent
+        self.cnt_iterations = params.cnt_iterations
+        self.keep_percent   = params.keep_percent
 
         self.get_dist = lambda source, destination: self.manager.get_distance(source, destination)
 
         self.current_plan = None
-        self.current_cost = None
-
-        self.day = None
-        self.car = None
 
         self.remaining_visits = None
         self.done = None
 
-    def compute_cost(self, tours):
+    def run_planner(self, tours):
         if self.params.debug:
             print('Greedy planner computing cost for {}'.format(tours))
 
@@ -42,31 +34,16 @@ class CGreedyPlanner(CPlanner, IGreedySolver):
 
         self.tours = tours
 
-        avg = 0
-        for _ in range(self.CNT_ITERATIONS):
+        for _ in range(self.cnt_iterations):
             self._reset()
 
-            self.greedy_run()
+            while not self._done():
+                self._apply_best_option()
 
-            self.current_cost = self.scorer.compute_cost(self.current_plan)
-            avg += self.current_cost
-
-            self._update_best()
-
-        avg /= self.CNT_ITERATIONS
-
-        if self.params.debug:
-            print('Average is {}'.format(avg))
-
-        return avg
+            self.on_new_planning(self.current_plan)
 
     def _reset(self):
-        self.current_plan = CFullPlanning(self.input.cnt_days, self.input.cnt_cars)
-
-        self.day = 0
-        self.car = 0
-
-        self.done = False
+        self.current_plan = CPlanning()
         self.remaining_visits = copy.deepcopy(self.input.consults_per_node)
 
     def _update_best(self):
@@ -76,14 +53,13 @@ class CGreedyPlanner(CPlanner, IGreedySolver):
             print('Not visited = {}'.format(not_visited))
 
             self.best_plan, self.best_cost = self.current_plan, self.current_cost
-
             self.write_best_plan()
 
     def _apply_best_option(self):
         choices = [(tour, self._compute_option_cost(tour)) for tour in self.tours]
         choices.sort(key=lambda t: t[1])
 
-        new_len = max(int(len(choices) * self.KEEP_PERCENT), 1)
+        new_len = max(int(len(choices) * self.keep_percent), 1)
 
         # Filter tours with too low score
         choices = choices[:new_len]
@@ -104,18 +80,11 @@ class CGreedyPlanner(CPlanner, IGreedySolver):
             self.remaining_visits[tour[i]] -= cnt
             assert self.remaining_visits[tour[i]] >= 0
 
-        self.current_plan[self.day][self.car] = CFullPlanning.Tour(tour, visits_per_node)
-        self._next()
-
-    def _next(self):
-        self.day += 1
-
-        if self.day >= self.input.cnt_days:
-            self.day = 0
-            self.car += 1
+        new_tour = CTour(tour, visits_per_node)
+        self.current_plan.tours.append(new_tour)
 
     def _done(self):
-        return self.done or all(x == 0 for x in self.remaining_visits) or self.car >= self.input.cnt_cars
+        return all(x == 0 for x in self.remaining_visits)
 
     def _compute_option_cost(self, tour):
         # get_dist_at_idx = lambda i: self.manager.get_distance(src, tour[i])
@@ -176,6 +145,9 @@ class CGreedyPlanner(CPlanner, IGreedySolver):
                     visits[i] -= 1
 
         return visits
+
+    def on_new_planning(self, new_planning):
+        self.new_planning_callback(new_planning)
 
     def write_best_plan(self):
         if not self.params.write_best_plan:
