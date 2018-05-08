@@ -46,15 +46,17 @@ class CManager:
         return self.input.distance_matrix[x][y]
 
     def on_new_plan(self, plan):
-        self._update_best(plan)
-
-    def _update_best(self, plan):
         cost = self.scorer.compute_cost(plan)
 
         if cost < self.best_cost:
             self.best_cost = cost
             self.best_plan = plan
+
+            self.output_best()
             print('best cost so far:', self.best_cost, len(self.best_plan.tours))
+
+    def output_best(self):
+        self.best_plan.to_full_planning()
 
     def compute_tour_distance(self, tour, visits=None):
         if tour is None:
@@ -73,18 +75,18 @@ class CManager:
     def get_embed_url(self, tour):
         return CMapsUrlConverter().generate_embed(self.params.maps_api_key, (self.input.places_names[i] + self.input.places_suffix for i in tour))
 
-    def compute_unique_tours(self, planning : CFullPlanning):
-        unique_tours = {}
-        for day in planning.days:
-            if day is None:
-                continue
-
-            for tour in day.tours:
-                if tour is None:
-                    continue
-                if tour.tour is None:
-                    continue
-                tuple_tour = tuple(tour.tour)
-                if unique_tours.get(tuple_tour, None) is None:
-                    unique_tours[tuple_tour] = len(unique_tours)
-        return unique_tours
+    # def compute_unique_tours(self, planning : CFullPlanning):
+    #     unique_tours = {}
+    #     for day in planning.days:
+    #         if day is None:
+    #             continue
+    #
+    #         for tour in day.tours:
+    #             if tour is None:
+    #                 continue
+    #             if tour.tour is None:
+    #                 continue
+    #             tuple_tour = tuple(tour.tour)
+    #             if unique_tours.get(tuple_tour, None) is None:
+    #                 unique_tours[tuple_tour] = len(unique_tours)
+    #     return unique_tours

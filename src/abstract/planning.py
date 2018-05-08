@@ -1,6 +1,7 @@
 from old.Singleton import Singleton
 from src import utils
-from src.utils import sec_to_str
+from src.params.constants import CONSULT_TIME
+from src.utils import sec_to_str, ceil_div
 
 
 class CTour:
@@ -13,137 +14,133 @@ class CPlanning:
     def __init__(self):
         self.tours = []
 
+    def to_full_planning(self, cnt_days : int = None, cnt_cars : int = None):
+        """
+        Generates the full planning corresponding to self.
+        Only one of *cnt_days* or *cnt_cars* must be set to a natural number, depending on which should be used.
+        """
+
+        assert ((cnt_days is None) != (cnt_cars is None))
+
+        if cnt_cars:
+            cnt_days = ceil_div(len(self.tours), cnt_cars)
+
+        cnt_tours_per_day = ceil_div(len(self.tours), cnt_days)
+        data = [self.tours[i:i + cnt_tours_per_day] for i in range(0, len(self.tours), cnt_tours_per_day)]
+
+        return CFullPlanning(data)
+
 
 class CFullPlanning:
-    class Day:
-        def __init__(self, tours_per_day):
-            if tours_per_day is None:
-                return
+    def __init__(self, data=None):
+        if data:
+            self.days = data
+        else:
+            self.days = []
 
-            self.tours = [None for _ in range(tours_per_day)]
-            """A list of tours done in a day (Planning.Tour)"""
+    def compute_unique_tours(self):
+        unique_tours = {}
+        for day in self.days:
+            if not day:
+                continue
 
-        def __len__(self):
-            return len(self.tours)
+            for tour in day:
+                if not tour:
+                    continue
+                if not tour.locations:
+                    continue
 
-        def __getitem__(self, index):
-            return self.tours[index]
+                tuple_tour = tuple(tour.locations)
+                if unique_tours.get(tuple_tour, None) is None:
+                    unique_tours[tuple_tour] = len(unique_tours)
+        return unique_tours
 
-        def __setitem__(self, index, value):
-            if len(self) <= index:
-                self.tours += [None] * (index - len(self) + 1)
-            self.tours[index] = value
 
-    class Tour:
-        def __init__(self, tour=None, cnt_visits=None):
-            self.tour = tour
-            """List of indexes of visited locations"""
+class CWriter(metaclass=Singleton):
+    def __init__(self):
+        pass
 
-            self.cnt_visits = cnt_visits
-            """List of number of visits done in every location of tour"""
+    def write_tours_html(self, planning, tours_html_file, manager):
+        places_names = manager.input.places_names
 
-    def __init__(self, days, tours_per_day):
-        if days is None or tours_per_day is None:
-            return
+        unique_tours = planning.compute_unique_tours()
+        unique_tours = sorted(unique_tours.items(), key=lambda x: x[1])
 
-        self.days = [CFullPlanning.Day(tours_per_day) for _ in range(days)]
-        """A list of plannings per day (Planning.Day)"""
+        tours_html = []
+        for tour, index in unique_tours:
+            embed_url = manager.get_embed_url(tour)
 
-    def __len__(self):
-        return len(self.days)
+            tour_html = open(manager.params.tour_template_file, 'r').read()
+            tour_html = tour_html.format(index=index + 1,
+                                         tour=[places_names[place] for place in tour],
+                                         duration=utils.sec_to_str(manager.compute_tour_distance(tour)),
+                                         iframe_src=embed_url)
+            tours_html.append(tour_html)
 
-    def __getitem__(self, index):
-        return self.days[index]
+        tours_html = '\n'.join(tours_html)
 
-    def __setitem__(self, key, value):
-        self.days[key] = value
+        index_page_html = open(manager.params.index_template_file, 'r').read()
+        index_page_html = index_page_html.format(date=utils.today_as_str(), tours=tours_html)
 
-    class CWriter(metaclass=Singleton):
-        def __init__(self):
-            pass
+        with open(tours_html_file, 'w') as f:
+            f.write(index_page_html)
 
-        def write_tours_html(self, planning, tours_html_file, manager):
-            places_names = manager.input.places_names
+    def write(self, planning, tours_file, days_file, manager):
+        unique_tours = planning.compute_unique_tours()
 
-            unique_tours = manager.compute_unique_tours(planning)
-            unique_tours = sorted(unique_tours.items(), key=lambda x: x[1])
+        # TODO: uncomment
+        # self.write_tours(list(unique_tours.items()), tours_file, manager)
+        # self.write_days(planning, days_file, unique_tours, manager)
 
-            tours_html = []
-            for tour, index in unique_tours:
-                embed_url = manager.get_embed_url(tour)
+    def write_tours(self, tours, tours_file, manager):
+        places_names = manager.input.places_names
 
-                tour_html = open(manager.params.tour_template_file, 'r').read()
-                tour_html = tour_html.format(index=index + 1,
-                                             tour=[places_names[place] for place in tour],
-                                             duration=utils.sec_to_str(manager.compute_tour_distance(tour)),
-                                             iframe_src=embed_url)
-                tours_html.append(tour_html)
+        with open(tours_file, 'w') as f:
+            # temp = list(unique_tours.items())
+            # temp.sort(key=lambda x: x[1])
 
-            tours_html = '\n'.join(tours_html)
+            for t, i in tours:
+                tour_time = sec_to_str(manager.compute_tour_distance(t))
 
-            index_page_html = open(manager.params.index_template_file, 'r').read()
-            index_page_html = index_page_html.format(date=utils.today_as_str(), tours=tours_html)
+                f.write('Traseu {}:\n'.format(i + 1))
+                f.write('\tDurata: {}\n'.format(tour_time))
+                f.write('\t{}\n'.format([places_names[place] for place in t]))
+                f.write('\t{}\n'.format(manager.get_embed_url(t)))
 
-            with open(tours_html_file, 'w') as f:
-                f.write(index_page_html)
+    def write_days(self, planning, days_file, unique_tours, manager):
+        places_names = manager.input.places_names
 
-        def write(self, planning, tours_file, days_file, manager):
-            unique_tours = manager.compute_unique_tours(planning)
+        with open(days_file, 'w') as f:
+            for i, day in enumerate(planning.days):
+                f.write('Ziua {}:\n'.format(i + 1))
 
-            # TODO: uncomment
-            # self.write_tours(planning, tours_file, unique_tours, manager)
-            # self.write_days(planning, days_file, unique_tours, manager)
+                for tour in day.tours:
+                    if tour is None:
+                        continue
+                    if tour.tour is None:
+                        continue
 
-        def write_tours(self, planning, tours_file, unique_tours, manager):
-            places_names = manager.input.places_names
+                    tuple_tour = tuple(tour.tour)
+                    cnt_visits = tour.cnt_visits
+                    tour_index = unique_tours[tuple_tour]
 
-            with open(tours_file, 'w') as f:
-                temp = list(unique_tours.items())
-                temp.sort(key=lambda x: x[1])
+                    if sum(tour.cnt_visits) == 0:
+                        continue
 
-                # print(temp)
-                for t, i in temp:
-                    tour_time = sec_to_str(manager.compute_tour_distance(t))
+                    f.write('\tTraseul {}\n'.format(tour_index + 1))
 
-                    f.write('Traseu {}:\n'.format(i + 1))
-                    f.write('\tDurata: {}\n'.format(tour_time))
-                    f.write('\t{}\n'.format([places_names[place] for place in t]))
-                    f.write('\t{}\n'.format(manager.get_embed_url(t)))
+                    time_on_road = manager.compute_tour_distance(tuple_tour, cnt_visits)
+                    time_on_visits = sum(tour.cnt_visits) * CONSULT_TIME
 
-        def write_days(self, planning, days_file, unique_tours, manager):
-            places_names = manager.input.places_names
+                    f.write('\tDurata drum: {}\n'.format(sec_to_str(time_on_road)))
+                    f.write('\tDurata investigatii: {}\n'.format(sec_to_str(time_on_visits)))
+                    f.write('\tDurata totala: {}\n'.format(sec_to_str(time_on_road + time_on_visits)))
 
-            with open(days_file, 'w') as f:
-                for i, day in enumerate(planning.days):
-                    f.write('Ziua {}:\n'.format(i + 1))
-
-                    for tour in day.tours:
-                        if tour is None:
+                    f.write('\tComunele:\n')
+                    for place_index, place in enumerate(tuple_tour):
+                        cnt_visits = tour.cnt_visits[place_index]
+                        if cnt_visits == 0:
                             continue
-                        if tour.tour is None:
-                            continue
-
-                        tuple_tour = tuple(tour.tour)
-                        cnt_visits = tour.cnt_visits
-                        tour_index = unique_tours[tuple_tour]
-
-                        if sum(tour.cnt_visits) == 0:
-                            continue
-
-                        f.write('\tTraseul {}\n'.format(tour_index + 1))
-
-                        time_on_road = manager.compute_tour_distance(tuple_tour, cnt_visits)
-                        time_on_visits = sum(tour.cnt_visits) * manager.input.consult_time
-
-                        f.write('\tDurata drum: {}\n'.format(sec_to_str(time_on_road)))
-                        f.write('\tDurata investigatii: {}\n'.format(sec_to_str(time_on_visits)))
-                        f.write('\tDurata totala: {}\n'.format(sec_to_str(time_on_road + time_on_visits)))
-
-                        f.write('\tComunele:\n')
-                        for place_index, place in enumerate(tuple_tour):
-                            cnt_visits = tour.cnt_visits[place_index]
-                            if cnt_visits == 0:
-                                continue
-                            time_on_visits = cnt_visits * manager.input.consult_time
-                            f.write('\t\t{}: {} vizite, {}\n'.format(places_names[place], cnt_visits,
-                                                                     sec_to_str(time_on_visits)))
+                        time_on_visits = cnt_visits * CONSULT_TIME
+                        f.write('\t\t{}: {} vizite, {}\n'.format(places_names[place], cnt_visits,
+                                                                 sec_to_str(time_on_visits)))

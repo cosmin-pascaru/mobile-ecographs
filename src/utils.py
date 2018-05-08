@@ -5,6 +5,10 @@ import datetime
 from src.params.constants import SECONDS_PER_HOUR, SECONDS_PER_MINUTE
 
 
+def ceil_div(a, b):
+    return (a + b - 1) // b
+
+
 def sec_to_str(seconds):
     h = seconds // SECONDS_PER_HOUR
     m = (seconds % SECONDS_PER_HOUR) // SECONDS_PER_MINUTE
