@@ -1,24 +1,25 @@
-from src.abstract.planning import CFullPlanning
-from src.concrete.maps_url import CMapsUrlConverter
+from src.alg.concrete.maps_url import CMapsUrlConverter
+
+
+class SManagerInput:
+    def __init__(self):
+        self.input = None
+
+        self.manager_params = None
+
+        self.tours = None
+
+        self.tour_selector_cls = None
+        self.tour_selector_params = None
+
+        self.planner_cls = None
+        self.planner_params = None
+
+        self.scorer_cls = None
+        self.scorer_params = None
 
 
 class CManager:
-    class SManagerInput:
-        def __init__(self):
-            self.input = None
-
-            self.manager_params = None
-
-            self.tours = None
-
-            self.tour_selector_cls = None
-            self.tour_selector_params = None
-
-            self.planner_cls = None
-            self.planner_params = None
-
-            self.scorer_cls = None
-            self.scorer_params = None
 
     def __init__(self, init_struct : SManagerInput):
         self.input = init_struct.input
@@ -56,7 +57,17 @@ class CManager:
             print('best cost so far:', self.best_cost, len(self.best_plan.tours))
 
     def output_best(self):
-        self.best_plan.to_full_planning()
+
+        print('---------------------------------PLAN:')
+        for tour in self.best_plan.tours:
+            print('TOUR:')
+            for loc, cnt in zip(tour.locations, tour.visits_per_loc):
+                if cnt:
+                    print((loc, cnt), sep=' ', end=' ')
+            print()
+
+        print('Best is {}'.format(len(self.best_plan.tours)))
+        # self.best_plan.to_full_planning()
 
     def compute_tour_distance(self, tour, visits=None):
         if tour is None:

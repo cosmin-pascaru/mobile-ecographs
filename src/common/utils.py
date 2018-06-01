@@ -1,8 +1,7 @@
+import datetime
 import random
 
-import datetime
-
-from src.params.constants import SECONDS_PER_HOUR, SECONDS_PER_MINUTE
+from src.alg.params.constants import SECONDS_PER_HOUR, SECONDS_PER_MINUTE
 
 
 def ceil_div(a, b):

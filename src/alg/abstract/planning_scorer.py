@@ -1,11 +1,10 @@
+import copy
 from abc import ABC, abstractmethod
 
-import copy
-
-from src.abstract.planning import CFullPlanning, CPlanning
-from src.concrete.planning_manager import CManager
-from src.input.planning_input import CPlanningInput
-from src.params.planning_scorer_params import CPlanningScorerParams
+from src.alg.abstract.planning import CFullPlanning, CPlanning
+from src.alg.concrete.planning_manager import CManager
+from src.alg.input.planning_input import CPlanningInput
+from src.alg.params.planning_scorer_params import CPlanningScorerParams
 
 
 class CPlanningScorer(ABC):

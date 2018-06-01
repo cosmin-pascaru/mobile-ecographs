@@ -1,8 +1,8 @@
-from src.abstract.sa_solver import CSaParams
-from src.concrete.tours_finder import CToursFinder, CToursFinderParams
 from src.concrete.sa_mtsp_solver import CSaMtspSolverParams, CSaMtspSolver, CMtspSolverParams
-from src.concrete.tours_writer import CToursWriter
-from src.params.constants import MAX_TIME_ON_ROAD
+
+from src.alg.abstract import CSaParams
+from src.alg.concrete.tours_finder import CToursFinder, CToursFinderParams
+from src.alg.params.constants import MAX_TIME_ON_ROAD
 
 with open('data/times.txt', 'r') as f:
     distance_matrix = eval(f.read())

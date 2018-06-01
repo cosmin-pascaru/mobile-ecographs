@@ -1,7 +1,7 @@
 from old.Singleton import Singleton
-from src import utils
-from src.params.constants import CONSULT_TIME
-from src.utils import sec_to_str, ceil_div
+from src.alg.params.constants import CONSULT_TIME
+from src.common import utils
+from src.common.utils import sec_to_str, ceil_div
 
 
 class CTour:
@@ -114,23 +114,23 @@ class CWriter(metaclass=Singleton):
             for i, day in enumerate(planning.days):
                 f.write('Ziua {}:\n'.format(i + 1))
 
-                for tour in day.tours:
-                    if tour is None:
+                for tour in day:
+                    if not tour:
                         continue
-                    if tour.tour is None:
+                    if not tour.locations:
                         continue
 
-                    tuple_tour = tuple(tour.tour)
-                    cnt_visits = tour.cnt_visits
+                    tuple_tour = tuple(tour.locations)
+                    cnt_visits = tour.visits_per_loc
                     tour_index = unique_tours[tuple_tour]
 
-                    if sum(tour.cnt_visits) == 0:
+                    if sum(tour.visits_per_loc) == 0:
                         continue
 
                     f.write('\tTraseul {}\n'.format(tour_index + 1))
 
                     time_on_road = manager.compute_tour_distance(tuple_tour, cnt_visits)
-                    time_on_visits = sum(tour.cnt_visits) * CONSULT_TIME
+                    time_on_visits = sum(tour.visits_per_loc) * CONSULT_TIME
 
                     f.write('\tDurata drum: {}\n'.format(sec_to_str(time_on_road)))
                     f.write('\tDurata investigatii: {}\n'.format(sec_to_str(time_on_visits)))

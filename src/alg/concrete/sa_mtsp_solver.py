@@ -1,10 +1,10 @@
 import copy
 import random
 
-from old.NatalityDataReader import NatalityDataReader
-from src.abstract.mtsp_solver import IMtspSolver
 from src.abstract.sa_solver import CSaParams, ISaSolver
-from src.params.constants import MAX_TIME_ON_ROAD
+
+from src.alg.abstract.mtsp_solver import IMtspSolver
+from src.alg.params.constants import MAX_TIME_ON_ROAD
 
 
 class CMtspSolverParams(object):

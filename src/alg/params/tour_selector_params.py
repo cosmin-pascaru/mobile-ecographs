@@ -1,4 +1,4 @@
-from src.abstract.sa_solver import CSaParams
+from src.alg.abstract.sa_solver import CSaParams
 
 
 class CTourSelectorParams(object):

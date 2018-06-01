@@ -1,6 +1,5 @@
-from src.abstract.mtsp_solver import IMtspSolver
-from src.concrete.sa_mtsp_solver import CSaMtspSolver, CSaMtspSolverParams, CMtspSolverParams
-from src.params.constants import MAX_TIME_ON_ROAD
+from src.alg.abstract.mtsp_solver import IMtspSolver
+from src.alg.params.constants import MAX_TIME_ON_ROAD
 
 
 class CToursFinderParams(object):

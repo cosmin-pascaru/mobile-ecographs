@@ -1,8 +1,7 @@
-from src.abstract.planner import CPlanner
-from src.abstract.tour_selector import CTourSelector
-from src.concrete.planning_manager import CManager
-from src.params.constants import MAX_TIME_ON_ROAD
-from src.params.tour_selector_params import CDisabledTourSelectorParams
+from src.alg.abstract.planner import CPlanner
+from src.alg.abstract.tour_selector import CTourSelector
+from src.alg.concrete.planning_manager import CManager
+from src.alg.params.tour_selector_params import CDisabledTourSelectorParams
 
 
 class CDisabledTourSelector(CTourSelector):

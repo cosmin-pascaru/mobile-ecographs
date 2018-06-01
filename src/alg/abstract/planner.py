@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
 
-from src.abstract.planning_scorer import CPlanningScorer
-from src.concrete.planning_manager import CManager
-from src.input.planning_input import CPlanningInput
-from src.params.planner_params import CPlannerParams
+from src.alg.abstract.planning_scorer import CPlanningScorer
+from src.alg.concrete.planning_manager import CManager
+from src.alg.input.planning_input import CPlanningInput
+from src.alg.params.planner_params import CPlannerParams
 
 
 class CPlanner(ABC):

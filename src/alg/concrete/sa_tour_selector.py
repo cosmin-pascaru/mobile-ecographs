@@ -1,14 +1,11 @@
+import copy
 import random
 
-import copy
-
-from src.abstract.planner import CPlanner
-from src.abstract.sa_solver import ISaSolver
-from src.abstract.tour_selector import CTourSelector
-from src.concrete.planning_manager import CManager
-from src.params.constants import MAX_TIME_ON_ROAD
-from src.params.tour_selector_params import CTourSelectorParams, CSaTourSelectorParams
-from src.utils import SECONDS_PER_HOUR
+from src.alg.abstract.planner import CPlanner
+from src.alg.abstract.sa_solver import ISaSolver
+from src.alg.abstract.tour_selector import CTourSelector
+from src.alg.concrete.planning_manager import CManager
+from src.alg.params.tour_selector_params import CSaTourSelectorParams
 
 
 class CSaTourSelector(CTourSelector, ISaSolver):

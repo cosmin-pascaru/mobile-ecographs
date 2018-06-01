@@ -1,21 +1,17 @@
 import math
-import os
 import random
 
-import sys
+from src.alg.concrete.disabled_tour_selector import CDisabledTourSelector
+from src.alg.concrete.planning_manager import CManager, SManagerInput
+from src.alg.concrete.sa_tour_selector import CSaTourSelector
+from src.alg.concrete.simple_planning_scorer import CSimplePlanningScorer
+from src.alg.params.manager_params import CManagerParams
+from src.alg.params.planner_params import CPlannerParams
+from src.alg.params.tour_selector_params import CDisabledTourSelectorParams, CSaTourSelectorParams
 
-from src.abstract.tour_selector import CTourSelector
-from src.concrete.disabled_tour_selector import CDisabledTourSelector
-from src.concrete.greedy_planner import CGreedyPlanner
-from src.concrete.planning_manager import CManager
-from src.concrete.simple_planning_scorer import CSimplePlanningScorer
-from src.concrete.sa_tour_selector import CSaTourSelector
-from src.input.planning_input import CPlanningInput
-from src.params.constants import SECONDS_PER_MINUTE, SECONDS_PER_HOUR
-from src.params.manager_params import CManagerParams
-from src.params.planner_params import CPlannerParams
-from src.params.planning_scorer_params import CPlanningScorerParams
-from src.params.tour_selector_params import CTourSelectorParams, CDisabledTourSelectorParams, CSaTourSelectorParams
+from src.alg.concrete.greedy_planner import CGreedyPlanner
+from src.alg.input.planning_input import CPlanningInput
+from src.alg.params.planning_scorer_params import CPlanningScorerParams
 
 seed = random.randint(0, (1 << 30))
 # seed = int(open('data/last_seed.txt', 'r').read().strip())
@@ -26,7 +22,7 @@ with open('data/last_seed.txt', 'w') as f:
     f.write(str(seed))
 
 # Init struct
-data = CManager.SManagerInput()
+data = SManagerInput()
 
 # Tours
 tours = list(map(lambda line: list(map(int, line.split())), open('data/tours/good_tours.txt', 'r').readlines()))
