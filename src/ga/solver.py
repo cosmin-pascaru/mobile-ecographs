@@ -19,8 +19,6 @@ visits_cnt = read_visits_cnt()
 all_visits = [[place_idx] * cnt_visits for place_idx, cnt_visits in enumerate(visits_cnt)]
 all_visits = list(itertools.chain.from_iterable(all_visits))
 
-all_visits = [1,1,1,2,2,2]
-
 distance_matrix = read_distance_matrix()
 
 creator.create("Fitness", base.Fitness, weights=(-1.0,))
@@ -41,15 +39,15 @@ def run():
     random.seed(seed)
     np.random.seed(seed)
 
-    pop = toolbox.population(n=GA_POP_SIZE)
-
-    hof   = tools.HallOfFame(1)
     stats = tools.Statistics(lambda ind: ind.fitness.values)
 
     stats.register("avg", np.mean)
     stats.register("std", np.std)
     stats.register("min", np.min)
     stats.register("max", np.max)
+
+    pop = toolbox.population(n=GA_POP_SIZE)
+    hof   = tools.HallOfFame(1)
 
     pop, log = algorithms.eaSimple(population = pop               ,
                                    toolbox    = toolbox           ,

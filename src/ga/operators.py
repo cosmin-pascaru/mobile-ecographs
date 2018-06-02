@@ -15,6 +15,9 @@ def evaluate_tour(tour):
 
 
 def evaluate(ind):
+
+    # TODO: EXTRA COST FOR GOING ABOVE MAX TIME PER DAY
+
     tours = [(0, ind.ends[0])]
     for tour_start, tour_end in zip(ind.ends[:-1], ind.ends[1:]):
         tours.append((tour_start, tour_end))
