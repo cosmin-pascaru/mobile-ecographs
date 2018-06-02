@@ -4,7 +4,7 @@ import random
 from src.abstract.sa_solver import CSaParams, ISaSolver
 
 from src.alg.abstract.mtsp_solver import IMtspSolver
-from src.alg.params.constants import MAX_TIME_ON_ROAD
+from src.common.constants import MAX_TIME_ON_ROAD
 
 
 class CMtspSolverParams(object):

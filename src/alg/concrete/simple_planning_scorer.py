@@ -1,11 +1,11 @@
 import copy
 
-from src.alg.abstract.planning_scorer import CPlanningScorer
-from src.alg.params.planning_scorer_params import CPlanningScorerParams
 from src.alg.abstract.planning import CFullPlanning, CPlanning
+from src.alg.abstract.planning_scorer import CPlanningScorer
 from src.alg.concrete.planning_manager import CManager
 from src.alg.input.planning_input import CPlanningInput
-from src.alg.params.constants import CONSULT_TIME
+from src.alg.params.planning_scorer_params import CPlanningScorerParams
+from src.common.constants import CONSULT_TIME
 
 
 class CSimplePlanningScorer (CPlanningScorer):

@@ -1,6 +1,6 @@
 from old.Singleton import Singleton
-from src.alg.params.constants import CONSULT_TIME
 from src.common import utils
+from src.common.constants import CONSULT_TIME
 from src.common.utils import sec_to_str, ceil_div
 
 

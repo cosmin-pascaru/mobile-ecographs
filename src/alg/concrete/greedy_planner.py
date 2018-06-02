@@ -2,13 +2,12 @@ import copy
 import os
 
 from src.alg.abstract.planner import CPlanner
-from src.alg.abstract.planning_scorer import CPlanningScorer
-from src.alg.params.planner_params import CPlannerParams
-
 from src.alg.abstract.planning import CFullPlanning, CPlanning, CTour
+from src.alg.abstract.planning_scorer import CPlanningScorer
 from src.alg.concrete.planning_manager import CManager
 from src.alg.input.planning_input import CPlanningInput
-from src.alg.params.constants import CONSULT_TIME, MAX_TIME_PER_DAY
+from src.alg.params.planner_params import CPlannerParams
+from src.common.constants import CONSULT_TIME, MAX_TIME_PER_DAY
 from src.common.utils import weighted_choice
 
 

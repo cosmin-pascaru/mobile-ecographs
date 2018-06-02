@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
 
-from src.alg.params.tour_selector_params import CTourSelectorParams
 from src.alg.abstract.planner import CPlanner
 from src.alg.concrete.planning_manager import CManager
-from src.alg.params.constants import MAX_TIME_ON_ROAD
+from src.alg.params.tour_selector_params import CTourSelectorParams
+from src.common.constants import MAX_TIME_ON_ROAD
 
 
 class CTourSelector(ABC):

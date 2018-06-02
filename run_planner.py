@@ -12,6 +12,7 @@ from src.alg.params.tour_selector_params import CDisabledTourSelectorParams, CSa
 from src.alg.concrete.greedy_planner import CGreedyPlanner
 from src.alg.input.planning_input import CPlanningInput
 from src.alg.params.planning_scorer_params import CPlanningScorerParams
+from src.common.read_input import read_visits_cnt, read_distance_matrix
 
 seed = random.randint(0, (1 << 30))
 # seed = int(open('data/last_seed.txt', 'r').read().strip())
@@ -40,13 +41,12 @@ inp.cnt_days = 21
 inp.cnt_cars = 2
 
 # Number of visits per place
-visits_cnts = list(map(lambda line: math.ceil(int(line.split()[-1]) * 7 / 12), open('data/populatie_ajustata.txt', 'r').readlines()))
+visits_cnts = read_visits_cnt()
 print('Total visits to do: {}'.format(sum(visits_cnts)))
 inp.consults_per_node = visits_cnts
 
 # Distance matrix
-dm = eval(open('data/times.txt', 'r').read())
-inp.distance_matrix = dm
+inp.distance_matrix = read_distance_matrix()
 
 # Set input
 data.input = inp
