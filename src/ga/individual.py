@@ -3,6 +3,8 @@ import random
 import copy
 import numpy as np
 
+ASSERTS_ACTIVE = False
+
 
 class Individual(object):
     def __init__(self, perm=None, ends=None, nr_visits=None, nr_tours=None):
@@ -31,8 +33,6 @@ class Individual(object):
             assert False
 
         self._assert_is_valid()
-
-
 
     def init_full(self, perm, ends):
         self.perm = perm
@@ -92,6 +92,8 @@ class Individual(object):
 
         return self
 
+    # TODO: add mutation for 2-opt hill climbing?
+
     @staticmethod
     def cx_perm(ind1, ind2):
         ind1._assert_is_valid()
@@ -149,21 +151,16 @@ class Individual(object):
         return child
 
     def _assert_is_valid(self):
+        if ASSERTS_ACTIVE:
+            assert (self.len_perm == len(self.perm))
+            assert (self.len_ends == len(self.ends))
 
-        # TODO: make this do nothing
+            sorted_perm = np.sort(self.perm)
 
-        assert (self.len_perm == len(self.perm))
-        assert (self.len_ends == len(self.ends))
-
-        sorted_perm = np.sort(self.perm)
-
-        assert (all(i == sorted_perm[i] for i in range(len(sorted_perm))))
-        assert (all(prv <= nxt for prv, nxt in zip(self.ends[:-1], self.ends[1:])))
+            assert (all(i == sorted_perm[i] for i in range(len(sorted_perm))))
+            assert (all(prv <= nxt for prv, nxt in zip(self.ends[:-1], self.ends[1:])))
 
 
 
 
 
-# a = np.array([1,2,3,4,5,6])
-# a[1:5] = np.flip(a[1:5], 0)
-# print(a)

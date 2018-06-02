@@ -21,7 +21,7 @@ all_visits = list(itertools.chain.from_iterable(all_visits))
 
 distance_matrix = read_distance_matrix()
 
-creator.create("Fitness", base.Fitness, weights=(-1.0,))
+creator.create("Fitness", base.Fitness, weights=(-1,))
 creator.create("Individual", Individual, fitness=creator.Fitness)
 
 toolbox = base.Toolbox()
@@ -41,13 +41,13 @@ def run():
 
     stats = tools.Statistics(lambda ind: ind.fitness.values)
 
-    stats.register("avg", np.mean)
-    stats.register("std", np.std)
-    stats.register("min", np.min)
-    stats.register("max", np.max)
+    stats.register( "min", np.min  )
+    stats.register( "max", np.max  )
+    stats.register( "avg", np.mean )
+    stats.register( "std", np.std  )
 
     pop = toolbox.population(n=GA_POP_SIZE)
-    hof   = tools.HallOfFame(1)
+    hof = tools.HallOfFame(1)
 
     pop, log = algorithms.eaSimple(population = pop               ,
                                    toolbox    = toolbox           ,
@@ -61,3 +61,6 @@ def run():
     print(pop)
     print(log)
     print(hof)
+
+
+__all__ = ["run", "all_visits", "distance_matrix"]
