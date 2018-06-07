@@ -83,7 +83,7 @@ class Individual(object):
     def mutate_update_ends(self):
         i = random.randrange(0, self.len_ends)
 
-        left  = self.ends[i - 1]     if i > 0                 else 1
+        left  = self.ends[i - 1]     if i > 0                 else 0
         right = self.ends[i + 1] + 1 if i < self.len_ends - 1 else self.len_perm
 
         self.ends[i] = random.randrange(left, right)

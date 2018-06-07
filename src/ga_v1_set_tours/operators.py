@@ -1,17 +1,17 @@
 import random
 
 from src.common.constants import CONSULT_TIME, MAX_TIME_PER_DAY
-from src.ga.individual import Individual
-from src.ga.params import TOUR_COST, ON_ROAD_COST_FACTOR, TOO_LONG_TOUR_FACTOR
-import src.ga.solver
+from src.ga_v1_set_tours.individual import Individual
+from src.ga_v1_set_tours.params import TOUR_COST, ON_ROAD_COST_FACTOR, TOO_LONG_TOUR_FACTOR
+import src.ga_v1_set_tours.solver
 
 
 def evaluate_tour(tour):
     home = 0
 
-    tour_real_locations = [home] + [src.ga.solver.all_visits[i] for i in range(tour[0], tour[1])] + [home]
-    total_on_road_time = sum(src.ga.solver.distance_matrix[i][j] for i, j in zip(tour_real_locations[:-1], tour_real_locations[1:]))
-    total_on_visits_time = len(tour_real_locations) * CONSULT_TIME
+    tour_real_locations = [home] + [src.ga_v1_set_tours.solver.all_visits[i] for i in range(tour[0], tour[1])] + [home]
+    total_on_road_time = sum(src.ga_v1_set_tours.solver.distance_matrix[i][j] for i, j in zip(tour_real_locations[:-1], tour_real_locations[1:]))
+    total_on_visits_time = (tour[1] - tour[0]) * CONSULT_TIME
 
     total_day_time = total_on_road_time + total_on_visits_time
 
