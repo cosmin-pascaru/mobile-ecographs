@@ -3,7 +3,7 @@ from src.ga_v2_greedy_tours.params import TOUR_COST
 import src.ga_v2_greedy_tours
 import src.ga_v2_greedy_tours.solver
 
-def _compute_tours_greedy(ind):
+def _compute_tours_greedy(individual):
 
     distance_matrix = src.ga_v2_greedy_tours.solver.distance_matrix
     all_visits      = src.ga_v2_greedy_tours.solver.all_visits
@@ -53,7 +53,7 @@ def _compute_tours_greedy(ind):
 
     ##################################################
 
-    for location_idx in ind:
+    for location_idx in individual:
         location = all_visits[location_idx]
 
         if can_add_to_curr_tour(location):
@@ -74,6 +74,7 @@ def _compute_tours_greedy(ind):
 
 
 least_tours_so_far = float('inf')
+
 
 def evaluate_greedy_tour_selection(ind):
     all_tours = _compute_tours_greedy(ind)

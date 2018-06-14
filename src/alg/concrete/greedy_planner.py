@@ -95,12 +95,17 @@ class CGreedyPlanner(CPlanner):
         if sum(visits_per_node) == 0:
             return float('inf')  # a cost for a road where we do nothing is infinite
 
-        # visits_cost = -sum(visits_per_node)
         visits_cost = -sum(visits_per_node) * CONSULT_TIME
-        # visits_cost = sum(cnt * dist(get_dist_at_idx(i)) for i, cnt in enumerate(visits_per_node))
-        """Cost should be higher with more visits, but lower as you visit places further away?"""
+
+        # TODO: Cost should be higher with more visits, but lower as you visit places further away?
+        # TODO: probably what's below is better
+
+        # TODO: cost might make sense to be different;
+        # TODO: cost = total_dist / nr_visits
+        # TODO: basically, it's a metric of how much distance per visit you would have to spend by following this tour
 
         return self.manager.compute_tour_distance(tour, visits_per_node) + visits_cost
+        # return self.manager.compute_tour_distance(tour, visits_per_node) / sum(visits_per_node)
 
     def _compute_visits_per_node(self, tour):
         if tour is None:
@@ -117,6 +122,7 @@ class CGreedyPlanner(CPlanner):
 
         for i, imp in node_importances:
 
+            # TODO: inspect and remember the reason why this is 2 *, and not just CONSULT_TIME
             if remaining_time < 2 * CONSULT_TIME:
                 break
 
@@ -132,12 +138,6 @@ class CGreedyPlanner(CPlanner):
                     temp = min(self.remaining_visits[tour[i]] - 1, temp_remaining_time // CONSULT_TIME)
 
                     visits[i] += temp
-                    # self.remaining_visits[tour[i]] -= temp
-
-                    # temp_remaining_time = self.manager.input.max_time_per_day
-                    # temp_remaining_time -= self.manager.compute_tour_distance(tour, visits)
-                    # temp_remaining_time -= sum(visits) * self.input.consult_time
-
                     temp_remaining_time -= temp * CONSULT_TIME
 
                     remaining_time = temp_remaining_time

@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 
 # Temp Output
+data/perm/
 data/html/
 data/plans/
 data/last_seed.txt
