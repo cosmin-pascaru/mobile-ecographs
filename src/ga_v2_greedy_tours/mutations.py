@@ -12,6 +12,12 @@ def _choose_2_rand_idx(ind):
     return i, j
 
 
+def shuffle(ind):
+    i, j = _choose_2_rand_idx(ind)
+    np.random.shuffle(ind[i:j])
+    return ind
+
+
 def reverse_subsequence(ind : np.ndarray):
     i, j = _choose_2_rand_idx(ind)
     ind[i:j] = np.flip(ind[i:j], 0)

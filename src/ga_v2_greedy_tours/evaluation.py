@@ -91,7 +91,3 @@ def evaluate_greedy_tour_selection(ind):
         print("LEAST TOURS SO FAR: {}".format(least_tours_so_far))
 
     return (total_cost, )
-
-
-def asdfasdf():
-    pass

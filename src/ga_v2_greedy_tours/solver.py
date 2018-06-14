@@ -37,7 +37,6 @@ toolbox.register( "mate"       , crossover                                      
 toolbox.register( "mutate"     , mutate                                               )
 toolbox.register( "select"     , tools.selTournament, tournsize=3                     )
 
-
 def load_population():
     if PopulationLoadType.POP_NEW == GA_POP_LOAD_TYPE:
         return toolbox.population(n = GA_POP_SIZE)

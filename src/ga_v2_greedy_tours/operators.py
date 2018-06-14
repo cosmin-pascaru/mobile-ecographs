@@ -4,8 +4,12 @@ import functools
 
 from src.ga_v2_greedy_tours.crossovers import cx_pmx, cx_ox, cx_upmx
 import src.ga_v2_greedy_tours.evaluation
-from src.ga_v2_greedy_tours.mutations import reverse_subsequence as mut_rev_subseq, swap2 as mut_swap2
-from src.ga_v2_greedy_tours.params import CX_OX_PROB, CX_PMX_PROB, CX_UPMX_PROB, MUT_REV_SUBSEQ_PROB, MUT_SWAP_2_PROB
+from src.ga_v2_greedy_tours.mutations import \
+    reverse_subsequence as mut_rev_subseq, \
+    swap2               as mut_swap2, \
+    shuffle             as mut_shuffle
+from src.ga_v2_greedy_tours.params import CX_OX_PROB, CX_PMX_PROB, CX_UPMX_PROB, MUT_REV_SUBSEQ_PROB, MUT_SWAP_2_PROB, \
+    MUT_SHUFFLE_PROB
 
 evaluate_greedy_tour_selection = src.ga_v2_greedy_tours.evaluation.evaluate_greedy_tour_selection
 
@@ -32,7 +36,8 @@ def _apply_weighted_random_func(func_arr, *args):
 
 mutations = [
     (mut_rev_subseq, MUT_REV_SUBSEQ_PROB),
-    (mut_swap2,      MUT_SWAP_2_PROB)
+    (mut_swap2,      MUT_SWAP_2_PROB),
+    (mut_shuffle,    MUT_SHUFFLE_PROB)
 ]
 
 crossovers = [

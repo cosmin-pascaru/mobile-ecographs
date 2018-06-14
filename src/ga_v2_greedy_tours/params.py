@@ -51,6 +51,7 @@ CX_OX_PROB   = 0.34
 
 MUT_REV_SUBSEQ_PROB = 0.25
 MUT_SWAP_2_PROB     = 0.75
+MUT_SHUFFLE_PROB    = 0.00  # TODO: change, and observe results
 
 ###########################
 
