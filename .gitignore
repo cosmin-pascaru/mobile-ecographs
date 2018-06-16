@@ -9,6 +9,7 @@ data/html/
 data/plans/
 data/last_seed.txt
 data/googleapi_key.txt
+data/runs_*
 
 # PyCharm
 .idea/

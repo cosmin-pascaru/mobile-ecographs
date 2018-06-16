@@ -41,11 +41,14 @@ class CManager:
                                                            tours=init_struct.tours,
                                                            params=init_struct.tour_selector_params,
                                                            planner=self.planner)
-        self.best_cost = float('inf')
+        self.best_cost = None
         self.best_plan = None
 
     def run(self):
         self.tour_selector.run_tour_selector()
+
+        with open('data/runs_{}.txt'.format(self.tour_selector.params.max_time), 'a') as f:
+            f.write('{} {}\n'.format(*self.best_cost))
 
     def get_distance(self, x, y):
         return self.input.distance_matrix[x][y]
@@ -53,12 +56,12 @@ class CManager:
     def on_new_plan(self, plan):
         cost = self.scorer.compute_cost(plan)
 
-        if cost < self.best_cost:
+        if self.best_cost is None or cost < self.best_cost:
             self.best_cost = cost
             self.best_plan = plan
 
             self.output_best()
-            print('best cost so far:', self.best_cost, len(self.best_plan.tours))
+            print('best cost so far:', self.best_cost)
 
     def output_best_as_permutation(self):
         all_visits_per_location = read_visits_cnt()

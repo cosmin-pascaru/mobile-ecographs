@@ -91,3 +91,20 @@ def evaluate_greedy_tour_selection(ind):
         print("LEAST TOURS SO FAR: {}".format(least_tours_so_far))
 
     return (total_cost, )
+
+
+def evaluate_greedy_tour_selection_tuple(ind):
+    all_tours = _compute_tours_greedy(ind)
+
+    total_dist = sum(dist for _, dist in all_tours)
+    tours_count_penalty = len(all_tours) * TOUR_COST
+
+    total_cost = total_dist + tours_count_penalty
+
+    global least_tours_so_far
+
+    if len(all_tours) < least_tours_so_far:
+        least_tours_so_far = len(all_tours)
+        print("LEAST TOURS SO FAR: {}".format(least_tours_so_far))
+
+    return (len(all_tours), total_dist)

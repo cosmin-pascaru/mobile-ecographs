@@ -1,3 +1,5 @@
+import time
+
 from src.alg.abstract.planner import CPlanner
 from src.alg.abstract.tour_selector import CTourSelector
 from src.alg.concrete.planning_manager import CManager
@@ -15,6 +17,12 @@ class CDisabledTourSelector(CTourSelector):
     def run_tour_selector(self):
         all_tours = [self.tours[i] for i in range(len(self.tours))]
 
-        for iter_idx in range(self.params.cnt_iterations):
-            self.planner.run_planner(all_tours)
-
+        if self.params.cnt_iterations:
+            for iter_idx in range(self.params.cnt_iterations):
+                self.planner.run_planner(all_tours)
+        elif self.params.max_time:
+            start_time = time.time()
+            while time.time() - start_time <= self.params.max_time:
+                self.planner.run_planner(all_tours)
+        else:
+            assert False

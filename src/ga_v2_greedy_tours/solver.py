@@ -8,11 +8,14 @@ from deap import base
 from deap import creator
 from deap import tools
 
+from src.common.constants import SECONDS_PER_HOUR
 from src.common.read_input import read_visits_cnt, read_distance_matrix
+from src.ga_v2_greedy_tours.ea import eaMuPlusLambda
+from src.ga_v2_greedy_tours.evaluation import evaluate_greedy_tour_selection_tuple
 from src.ga_v2_greedy_tours.individual import init_individual
 from src.ga_v2_greedy_tours.operators import evaluate, crossover, mutate
 from src.ga_v2_greedy_tours.params import GA_POP_SIZE, GaType, GA_TYPE, GA_PROB_CROSSOVER, GA_PROB_MUTATION, \
-    GA_NR_GENERATIONS, GA_MU, GA_LAMBDA, GA_POP_LOAD_TYPE, PopulationLoadType
+    GA_NR_GENERATIONS, GA_MU, GA_LAMBDA, GA_POP_LOAD_TYPE, PopulationLoadType, GA_TIME_LIMIT
 
 visits_cnt = read_visits_cnt()
 all_visits = [[place_idx] * cnt_visits for place_idx, cnt_visits in enumerate(visits_cnt)]
@@ -31,7 +34,6 @@ toolbox = base.Toolbox()
 
 toolbox.register( "individual" , init_individual, creator.Individual, len(all_visits) )
 toolbox.register( "population" , tools.initRepeat, list, toolbox.individual           )
-toolbox.register( "clone"      , np.copy                                              )
 toolbox.register( "evaluate"   , evaluate                                             )
 toolbox.register( "mate"       , crossover                                            )
 toolbox.register( "mutate"     , mutate                                               )
@@ -80,11 +82,11 @@ def run_test_permutation_evaluation():
 
     score = evaluate(perm)
 
-    print('SCORE IIIIIS... {}'.format(score))
+    print('SCORE IS... {}'.format(score))
 
 
 def run():
-    seed = 3458974
+    seed = random.randint(0, (1 << 30))
     random.seed(seed)
     np.random.seed(seed)
 
@@ -100,6 +102,9 @@ def run():
 
     start_time = time.time()
 
+    if GA_TIME_LIMIT is not None:
+        GA_NR_GENERATIONS = (1 << 30)
+
     if GaType.GA_SIMPLE == GA_TYPE:
         pop, log = algorithms.eaSimple(population = pop               ,
                                        toolbox    = toolbox           ,
@@ -111,20 +116,29 @@ def run():
                                        verbose    = True              )
 
     elif GaType.GA_MU_LAMBDA == GA_TYPE:
-        pop, log = algorithms.eaMuPlusLambda(population = pop               ,
-                                             toolbox    = toolbox           ,
-                                             cxpb       = GA_PROB_CROSSOVER ,
-                                             mutpb      = GA_PROB_MUTATION  ,
-                                             ngen       = GA_NR_GENERATIONS ,
-                                             mu         = GA_MU             ,
-                                             lambda_    = GA_LAMBDA         ,
-                                             stats      = stats             ,
-                                             halloffame = hof               ,
-                                             verbose    = True              )
+
+        pop, log = eaMuPlusLambda(population       = pop                  ,
+                                  toolbox          = toolbox              ,
+                                  cxpb             = GA_PROB_CROSSOVER    ,
+                                  mutpb            = GA_PROB_MUTATION     ,
+                                  ngen             = GA_NR_GENERATIONS    ,
+                                  mu               = GA_MU                ,
+                                  lambda_          = GA_LAMBDA            ,
+                                  stats            = stats                ,
+                                  halloffame       = hof                  ,
+                                  verbose          = True                 ,
+                                  time_limit       = GA_TIME_LIMIT        ,
+                                  print_best_delay = 1000                 )
     else:
         raise RuntimeError("GA type not implemented")
 
     end_time = time.time()
+
+    best = hof.items[0]
+    score = evaluate_greedy_tour_selection_tuple(best)
+
+    with open('data/runs_ga_{}_{}_{}'.format(GA_POP_SIZE, GA_PROB_CROSSOVER, GA_PROB_MUTATION), 'a') as f:
+        f.write('{} {}\n'.format(*score))
 
     print("Time taken: {}".format(end_time - start_time))
 

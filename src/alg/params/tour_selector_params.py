@@ -17,5 +17,5 @@ class CDisabledTourSelectorParams(CTourSelectorParams):
     def __init__(self):
         super().__init__()
         self.cnt_iterations = None
-
+        self.max_time = None
 

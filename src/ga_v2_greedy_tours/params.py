@@ -1,5 +1,7 @@
 from enum import Enum, auto
 
+from src.common.constants import SECONDS_PER_HOUR
+
 
 class GaType(Enum):
     GA_SIMPLE    = auto()
@@ -27,10 +29,11 @@ GA_IND_SAVE_FOLDER = 'data/ga/best_individuals'
 
 #############################
 
-GA_POP_SIZE       = 150
+GA_POP_SIZE       = 100
 GA_PROB_CROSSOVER = 0.6
 GA_PROB_MUTATION  = 0.2
-GA_NR_GENERATIONS = 10000
+GA_TIME_LIMIT     = 9 * SECONDS_PER_HOUR
+GA_NR_GENERATIONS = None
 
 # Only used by GA_MU_LAMBDA
 GA_MU     = GA_POP_SIZE
@@ -43,15 +46,15 @@ CX_UPMX_IND_PROB = 0.05
 
 # Crossover distribution
 
-CX_UPMX_PROB = 0.33
-CX_PMX_PROB  = 0.33
-CX_OX_PROB   = 0.34
+CX_UPMX_PROB = 0.0
+CX_PMX_PROB  = 0.4
+CX_OX_PROB   = 0.7
 
 # Mutation distribution
 
 MUT_REV_SUBSEQ_PROB = 0.25
-MUT_SWAP_2_PROB     = 0.75
-MUT_SHUFFLE_PROB    = 0.00  # TODO: change, and observe results
+MUT_SWAP_2_PROB     = 0.50
+MUT_SHUFFLE_PROB    = 0.25  # TODO: change, and observe results
 
 ###########################
 

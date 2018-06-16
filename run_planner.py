@@ -14,9 +14,9 @@ from src.alg.input.planning_input import CPlanningInput
 from src.alg.params.planning_scorer_params import CPlanningScorerParams
 from src.common.read_input import read_visits_cnt, read_distance_matrix
 
-# seed = random.randint(0, (1 << 30))
+seed = random.randint(0, (1 << 30))
 # seed = int(open('data/last_seed.txt', 'r').read().strip())
-seed = 475065778
+# seed = 475065778
 
 random.seed(seed)
 with open('data/last_seed.txt', 'w') as f:
@@ -67,7 +67,8 @@ if USE_SA_TOUR_SELECTOR:
 elif USE_DISABLED_TOUR_SELECTOR:
     tour_sel_params = CDisabledTourSelectorParams()
     tour_sel_params.debug = True
-    tour_sel_params.cnt_iterations = 1000
+    tour_sel_params.cnt_iterations = None
+    tour_sel_params.max_time = 20
 
     data.tour_selector_cls = CDisabledTourSelector
     data.tour_selector_params = tour_sel_params
@@ -77,7 +78,8 @@ planner_params = CPlannerParams()
 planner_params.debug = False
 planner_params.write_best_plan = True
 planner_params.cnt_iterations = 1
-planner_params.keep_percent = 0.2
+planner_params.keep_percent = 0.2  # default used
+# planner_params.keep_percent = 0.4  # large
 
 data.planner_cls = CGreedyPlanner
 data.planner_params = planner_params

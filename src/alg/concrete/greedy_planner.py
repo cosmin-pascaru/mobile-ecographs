@@ -114,7 +114,8 @@ class CGreedyPlanner(CPlanner):
         src = 0  # start node
 
         node_importances = [(i, self.get_dist(src, x)) for i, x in enumerate(tour)]
-        node_importances.sort(key=lambda t: t[1], reverse=True)
+        node_importances.sort(key=lambda t: t[1], reverse=True)  # Furthest townships first
+        # node_importances.sort(key=lambda t: t[1])  # Closest townships first
 
         visits = [0 for _ in tour]
 
