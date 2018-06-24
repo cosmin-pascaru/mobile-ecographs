@@ -1,7 +1,8 @@
 import math
 
+from src.common.constants import CONSULT_TIME
 
-filename = "data/runs_ga_150_0.6_0.2"
+filename = "data/runs_ga_smart_100_0.6_0.3_300"
 with open(filename, 'r') as f:
     lines = f.readlines()
 

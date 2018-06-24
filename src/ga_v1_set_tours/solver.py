@@ -36,7 +36,7 @@ toolbox.register("mutate"     , mutate)
 toolbox.register("select"     , tools.selTournament, tournsize=3)
 
 def run():
-    seed = 3458974
+    seed = random.randint(0, (1 << 30))
     random.seed(seed)
     np.random.seed(seed)
 

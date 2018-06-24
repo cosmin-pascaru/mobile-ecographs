@@ -29,10 +29,11 @@ GA_IND_SAVE_FOLDER = 'data/ga/best_individuals'
 
 #############################
 
-GA_POP_SIZE       = 100
+GA_POP_SIZE       = 500
 GA_PROB_CROSSOVER = 0.6
-GA_PROB_MUTATION  = 0.2
-GA_TIME_LIMIT     = 9 * SECONDS_PER_HOUR
+GA_PROB_MUTATION  = 0.3
+# GA_TIME_LIMIT     = 9 * SECONDS_PER_HOUR
+GA_TIME_LIMIT     = 600
 GA_NR_GENERATIONS = None
 
 # Only used by GA_MU_LAMBDA
@@ -47,14 +48,14 @@ CX_UPMX_IND_PROB = 0.05
 # Crossover distribution
 
 CX_UPMX_PROB = 0.0
-CX_PMX_PROB  = 0.4
+CX_PMX_PROB  = 0.3
 CX_OX_PROB   = 0.7
 
 # Mutation distribution
 
-MUT_REV_SUBSEQ_PROB = 0.25
-MUT_SWAP_2_PROB     = 0.50
-MUT_SHUFFLE_PROB    = 0.25  # TODO: change, and observe results
+MUT_REV_SUBSEQ_PROB = 0.1
+MUT_SWAP_2_PROB     = 0.8
+MUT_SHUFFLE_PROB    = 0.1  # TODO: change, and observe results
 
 ###########################
 

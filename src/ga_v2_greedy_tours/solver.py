@@ -8,7 +8,7 @@ from deap import base
 from deap import creator
 from deap import tools
 
-from src.common.constants import SECONDS_PER_HOUR
+from src.common.constants import SECONDS_PER_HOUR, CONSULT_TIME
 from src.common.read_input import read_visits_cnt, read_distance_matrix
 from src.ga_v2_greedy_tours.ea import eaMuPlusLambda
 from src.ga_v2_greedy_tours.evaluation import evaluate_greedy_tour_selection_tuple
@@ -21,7 +21,16 @@ visits_cnt = read_visits_cnt()
 all_visits = [[place_idx] * cnt_visits for place_idx, cnt_visits in enumerate(visits_cnt)]
 all_visits = list(itertools.chain.from_iterable(all_visits))
 
+print(sum(visits_cnt))
+
 distance_matrix = read_distance_matrix()
+
+lst = [e for line in distance_matrix for e in line if e > 0]
+print(lst)
+minn = sum(sorted(lst)[:93])
+print('MIN TIME IIIIS.... {}'.format(minn / SECONDS_PER_HOUR))
+
+print('MIN FROM HOME TO SAT = {}'.format(min(e for e in distance_matrix[0] if e > 0)))
 
 creator.create("Fitness", base.Fitness, weights=(-1,))
 creator.create("Individual",
@@ -32,12 +41,12 @@ creator.create("Individual",
 
 toolbox = base.Toolbox()
 
-toolbox.register( "individual" , init_individual, creator.Individual, len(all_visits) )
-toolbox.register( "population" , tools.initRepeat, list, toolbox.individual           )
-toolbox.register( "evaluate"   , evaluate                                             )
-toolbox.register( "mate"       , crossover                                            )
-toolbox.register( "mutate"     , mutate                                               )
-toolbox.register( "select"     , tools.selTournament, tournsize=3                     )
+toolbox.register( "individual" , init_individual, creator.Individual, visits_cnt )
+toolbox.register( "population" , tools.initRepeat, list, toolbox.individual      )
+toolbox.register( "evaluate"   , evaluate                                        )
+toolbox.register( "mate"       , crossover                                       )
+toolbox.register( "mutate"     , mutate                                          )
+toolbox.register( "select"     , tools.selTournament, tournsize = 3              )
 
 def load_population():
     if PopulationLoadType.POP_NEW == GA_POP_LOAD_TYPE:
@@ -137,7 +146,15 @@ def run():
     best = hof.items[0]
     score = evaluate_greedy_tour_selection_tuple(best)
 
-    with open('data/runs_ga_{}_{}_{}'.format(GA_POP_SIZE, GA_PROB_CROSSOVER, GA_PROB_MUTATION), 'a') as f:
+    ### score[0] = nr_tours
+    ### score[1] = total_distance INCLUDING VISITS!!!
+
+    print(score)
+
+    with open('data/runs_ga_smart_{}_{}_{}_{}'.format(GA_POP_SIZE,
+                                                      GA_PROB_CROSSOVER,
+                                                      GA_PROB_MUTATION,
+                                                      GA_TIME_LIMIT), 'a') as f:
         f.write('{} {}\n'.format(*score))
 
     print("Time taken: {}".format(end_time - start_time))

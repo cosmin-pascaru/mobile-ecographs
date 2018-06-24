@@ -1,7 +1,7 @@
 import copy
 import random
 
-from src.abstract.sa_solver import CSaParams, ISaSolver
+from src.alg.abstract.sa_solver import CSaParams, ISaSolver
 
 from src.alg.abstract.mtsp_solver import IMtspSolver
 from src.common.constants import MAX_TIME_ON_ROAD

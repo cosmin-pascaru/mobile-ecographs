@@ -97,9 +97,8 @@ def evaluate_greedy_tour_selection_tuple(ind):
     all_tours = _compute_tours_greedy(ind)
 
     total_dist = sum(dist for _, dist in all_tours)
-    tours_count_penalty = len(all_tours) * TOUR_COST
 
-    total_cost = total_dist + tours_count_penalty
+    print([dist for _, dist in all_tours])
 
     global least_tours_so_far
 
