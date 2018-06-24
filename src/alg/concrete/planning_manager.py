@@ -23,7 +23,7 @@ class SManagerInput:
         self.scorer_params = None
 
 
-class CManager:
+class Manager:
 
     def __init__(self, init_struct : SManagerInput):
         self.input = init_struct.input

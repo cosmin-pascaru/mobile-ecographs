@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 import math
 
 
-class CSaParams(object):
+class SaParams(object):
     def __init__(self,
                  debug                = False,
                  cooling_rate         = None,
@@ -23,7 +23,7 @@ class ISaSolver(ABC):
     def __init__(self):
         pass
 
-    def run_sa(self, params : CSaParams):
+    def run_sa(self, params : SaParams):
         temperature         = params.initial_temp
         cooling_rate        = params.cooling_rate
         print_progress_freq = params.print_progress_freq

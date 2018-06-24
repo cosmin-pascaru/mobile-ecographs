@@ -1,19 +1,19 @@
 import copy
 import os
 
-from src.alg.abstract.planner import CPlanner
-from src.alg.abstract.planning import CFullPlanning, CPlanning, CTour
-from src.alg.abstract.planning_scorer import CPlanningScorer
-from src.alg.concrete.planning_manager import CManager
-from src.alg.input.planning_input import CPlanningInput
-from src.alg.params.planner_params import CPlannerParams
+from src.alg.abstract.planner import Planner
+from src.alg.abstract.planning import FullPlanning, Planning, Tour
+from src.alg.abstract.planning_scorer import PlanningScorer
+from src.alg.concrete.planning_manager import Manager
+from src.alg.input.planning_input import PlanningInput
+from src.alg.params.planner_params import PlannerParams
 from src.common.constants import CONSULT_TIME, MAX_TIME_PER_DAY
 from src.common.utils import weighted_choice
 
 
-class CGreedyPlanner(CPlanner):
-    def __init__(self, manager: CManager, input: CPlanningInput, params: CPlannerParams, scorer: CPlanningScorer, new_plan_callback):
-        CPlanner.__init__(self, manager, input, params, scorer, new_plan_callback)
+class GreedyPlanner(Planner):
+    def __init__(self, manager: Manager, input: PlanningInput, params: PlannerParams, scorer: PlanningScorer, new_plan_callback):
+        Planner.__init__(self, manager, input, params, scorer, new_plan_callback)
 
         self.cnt_iterations = params.cnt_iterations
         self.keep_percent   = params.keep_percent
@@ -43,7 +43,7 @@ class CGreedyPlanner(CPlanner):
             self.on_new_planning(self.current_plan)
 
     def _reset(self):
-        self.current_plan = CPlanning()
+        self.current_plan = Planning()
         self.remaining_visits = copy.deepcopy(self.input.consults_per_node)
 
     def _update_best(self):
@@ -80,7 +80,7 @@ class CGreedyPlanner(CPlanner):
             self.remaining_visits[tour[i]] -= cnt
             assert self.remaining_visits[tour[i]] >= 0
 
-        new_tour = CTour(tour, visits_per_node)
+        new_tour = Tour(tour, visits_per_node)
         self.current_plan.tours.append(new_tour)
 
     def _done(self):
@@ -165,5 +165,5 @@ class CGreedyPlanner(CPlanner):
         tours_path      = os.path.join( folder      , tours_file      )
         days_path       = os.path.join( folder      , days_file       )
 
-        CFullPlanning.CWriter().write_tours_html(self.best_plan, tours_html_path, self.manager)
-        CFullPlanning.CWriter().write           (self.best_plan, tours_path, days_path, self.manager)
+        FullPlanning.CWriter().write_tours_html(self.best_plan, tours_html_path, self.manager)
+        FullPlanning.CWriter().write           (self.best_plan, tours_path, days_path, self.manager)

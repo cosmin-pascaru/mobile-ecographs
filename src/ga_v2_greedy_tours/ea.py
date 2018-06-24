@@ -18,8 +18,8 @@ from src.ga_v2_greedy_tours.params import GA_POP_SIZE, GaType, GA_TYPE, GA_PROB_
     GA_NR_GENERATIONS, GA_MU, GA_LAMBDA, GA_POP_LOAD_TYPE, PopulationLoadType, GA_TIME_LIMIT
 
 
-def eaMuPlusLambda(population, toolbox, mu, lambda_, cxpb, mutpb, ngen,
-                   stats=None, halloffame=None, verbose=__debug__, time_limit=None, print_best_delay=None):
+def ea_mu_plus_lambda(population, toolbox, mu, lambda_, cxpb, mutpb, ngen,
+                      stats=None, halloffame=None, verbose=__debug__, time_limit=None, print_best_delay=None):
     """This is the :math:`(\mu + \lambda)` evolutionary algorithm.
 
     :param population: A list of individuals.

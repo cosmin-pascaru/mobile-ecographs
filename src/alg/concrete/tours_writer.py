@@ -1,5 +1,5 @@
 
-class CToursWriter(object):
+class ToursWriter(object):
     def __init__(self):
         pass
 

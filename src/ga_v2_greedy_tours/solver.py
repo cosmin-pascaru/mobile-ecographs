@@ -10,7 +10,7 @@ from deap import tools
 
 from src.common.constants import SECONDS_PER_HOUR, CONSULT_TIME
 from src.common.read_input import read_visits_cnt, read_distance_matrix
-from src.ga_v2_greedy_tours.ea import eaMuPlusLambda
+from src.ga_v2_greedy_tours.ea import ea_mu_plus_lambda
 from src.ga_v2_greedy_tours.evaluation import evaluate_greedy_tour_selection_tuple
 from src.ga_v2_greedy_tours.individual import init_individual
 from src.ga_v2_greedy_tours.operators import evaluate, crossover, mutate
@@ -126,18 +126,18 @@ def run():
 
     elif GaType.GA_MU_LAMBDA == GA_TYPE:
 
-        pop, log = eaMuPlusLambda(population       = pop                  ,
-                                  toolbox          = toolbox              ,
-                                  cxpb             = GA_PROB_CROSSOVER    ,
-                                  mutpb            = GA_PROB_MUTATION     ,
-                                  ngen             = GA_NR_GENERATIONS    ,
-                                  mu               = GA_MU                ,
-                                  lambda_          = GA_LAMBDA            ,
-                                  stats            = stats                ,
-                                  halloffame       = hof                  ,
-                                  verbose          = True                 ,
-                                  time_limit       = GA_TIME_LIMIT        ,
-                                  print_best_delay = 1000                 )
+        pop, log = ea_mu_plus_lambda(population       = pop,
+                                     toolbox          = toolbox,
+                                     cxpb             = GA_PROB_CROSSOVER,
+                                     mutpb            = GA_PROB_MUTATION,
+                                     ngen             = GA_NR_GENERATIONS,
+                                     mu               = GA_MU,
+                                     lambda_          = GA_LAMBDA,
+                                     stats            = stats,
+                                     halloffame       = hof,
+                                     verbose          = True,
+                                     time_limit       = GA_TIME_LIMIT,
+                                     print_best_delay = 1000)
     else:
         raise RuntimeError("GA type not implemented")
 

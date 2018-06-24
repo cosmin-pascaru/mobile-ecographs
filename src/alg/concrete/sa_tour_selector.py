@@ -1,16 +1,16 @@
 import copy
 import random
 
-from src.alg.abstract.planner import CPlanner
+from src.alg.abstract.planner import Planner
 from src.alg.abstract.sa_solver import ISaSolver
-from src.alg.abstract.tour_selector import CTourSelector
-from src.alg.concrete.planning_manager import CManager
-from src.alg.params.tour_selector_params import CSaTourSelectorParams
+from src.alg.abstract.tour_selector import TourSelector
+from src.alg.concrete.planning_manager import Manager
+from src.alg.params.tour_selector_params import SaTourSelectorParams
 
 
-class CSaTourSelector(CTourSelector, ISaSolver):
-    def __init__(self, manager: CManager, tours, params: CSaTourSelectorParams, planner : CPlanner):
-        CTourSelector.__init__(self, manager, tours, params.tour_sel_params, planner)
+class SaTourSelector(TourSelector, ISaSolver):
+    def __init__(self, manager: Manager, tours, params: SaTourSelectorParams, planner : Planner):
+        TourSelector.__init__(self, manager, tours, params.tour_sel_params, planner)
         ISaSolver    .__init__(self)
 
         self.params = params

@@ -1,4 +1,4 @@
-class CPlanningInput:
+class PlanningInput:
     def __init__(self):
         self.distance_matrix = None
         """Distances between all nodes, in seconds"""

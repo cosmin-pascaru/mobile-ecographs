@@ -1,20 +1,20 @@
 import copy
 
-from src.alg.abstract.planning import CFullPlanning, CPlanning
-from src.alg.abstract.planning_scorer import CPlanningScorer
-from src.alg.concrete.planning_manager import CManager
-from src.alg.input.planning_input import CPlanningInput
-from src.alg.params.planning_scorer_params import CPlanningScorerParams
+from src.alg.abstract.planning import FullPlanning, Planning
+from src.alg.abstract.planning_scorer import PlanningScorer
+from src.alg.concrete.planning_manager import Manager
+from src.alg.input.planning_input import PlanningInput
+from src.alg.params.planning_scorer_params import PlanningScorerParams
 from src.common.constants import CONSULT_TIME
 
 
-class CSimplePlanningScorer (CPlanningScorer):
-    def __init__(self, manager: CManager, params: CPlanningScorerParams, input: CPlanningInput):
+class SimplePlanningScorer (PlanningScorer):
+    def __init__(self, manager: Manager, params: PlanningScorerParams, input: PlanningInput):
         super().__init__(manager, params, input)
 
         self.remaining_visits = None
 
-    def compute_cost(self, planning: CPlanning):
+    def compute_cost(self, planning: Planning):
         self._init_remaining_visits()
 
         time_on_road     = 0
@@ -41,7 +41,7 @@ class CSimplePlanningScorer (CPlanningScorer):
 
         return (nr_tours, time_on_road)
 
-    def compute_cost_full(self, planning: CFullPlanning):
+    def compute_cost_full(self, planning: FullPlanning):
         self._init_remaining_visits()
 
         time_on_road = 0

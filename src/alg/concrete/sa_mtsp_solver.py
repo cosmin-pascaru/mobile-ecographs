@@ -1,21 +1,21 @@
 import copy
 import random
 
-from src.alg.abstract.sa_solver import CSaParams, ISaSolver
+from src.alg.abstract.sa_solver import SaParams, ISaSolver
 
 from src.alg.abstract.mtsp_solver import IMtspSolver
 from src.common.constants import MAX_TIME_ON_ROAD
 
 
-class CMtspSolverParams(object):
+class MtspSolverParams(object):
     def __init__(self, distance_matrix=None, nr_mtsp_tours=None, tour_time_limit=None):
         self.distance_matrix = distance_matrix
         self.nr_mtsp_tours   = nr_mtsp_tours
         self.tour_time_limit = tour_time_limit
 
 
-class CSaMtspSolverParams(object):
-    def __init__(self, sa_params : CSaParams = CSaParams(), mtsp_params : CMtspSolverParams = CMtspSolverParams()):
+class SaMtspSolverParams(object):
+    def __init__(self, sa_params : SaParams = SaParams(), mtsp_params : MtspSolverParams = MtspSolverParams()):
         self.sa_params   = sa_params
         self.mtsp_params = mtsp_params
 
@@ -48,7 +48,7 @@ class CSolution(object):
                 circuit_cost += distance_matrix[node_st][node_end]
 
             if circuit_cost > tour_limit:
-                circuit_cost *= CSaMtspSolver.TOO_LONG_TOUR_PENALTY
+                circuit_cost *= SaMtspSolver.TOO_LONG_TOUR_PENALTY
 
             cost += circuit_cost
         return cost
@@ -123,7 +123,7 @@ CSolution.neighbour_functions = [(CSolution.swap2         , 0.0),
                                  (CSolution.change_lengths, 1.0)]
 
 
-class CSaMtspSolver(IMtspSolver, ISaSolver):
+class SaMtspSolver(IMtspSolver, ISaSolver):
     TOO_LONG_TOUR_PENALTY = 100
 
     def __init__(self):
@@ -134,7 +134,7 @@ class CSaMtspSolver(IMtspSolver, ISaSolver):
         self.distance_matrix = None
         self.tour_time_limit = None
 
-    def run_mtsp(self, params: CSaMtspSolverParams):
+    def run_mtsp(self, params: SaMtspSolverParams):
         self.distance_matrix = params.mtsp_params.distance_matrix
         self.tour_time_limit = params.mtsp_params.tour_time_limit
         self.nr_tours = params.mtsp_params.nr_mtsp_tours

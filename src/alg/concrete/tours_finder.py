@@ -2,21 +2,21 @@ from src.alg.abstract.mtsp_solver import IMtspSolver
 from src.common.constants import MAX_TIME_ON_ROAD
 
 
-class CToursFinderParams(object):
+class ToursFinderParams(object):
     def __init__(self, distance_matrix=None, min_cnt_tours=None, debug=False):
         self.distance_matrix = distance_matrix
         self.min_cnt_tours   = min_cnt_tours
         self.debug           = debug
 
 
-class CToursFinder:
+class ToursFinder:
     def __init__(self):
         pass
 
     def compute_tours(self,
-                      tours_finder_params : CToursFinderParams,
-                      solver              : IMtspSolver       ,
-                      solver_params                           ):
+                      tours_finder_params : ToursFinderParams,
+                      solver              : IMtspSolver,
+                      solver_params):
 
         distance_matrix = tours_finder_params.distance_matrix
         min_cnt_tours   = tours_finder_params.min_cnt_tours

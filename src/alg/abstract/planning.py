@@ -4,13 +4,13 @@ from src.common.constants import CONSULT_TIME
 from src.common.utils import sec_to_str, ceil_div
 
 
-class CTour:
+class Tour:
     def __init__(self, locations=None, visits_per_location=None):
         self.locations = locations
         self.visits_per_loc = visits_per_location
 
 
-class CPlanning:
+class Planning:
     def __init__(self):
         self.tours = []
 
@@ -28,10 +28,10 @@ class CPlanning:
         cnt_tours_per_day = ceil_div(len(self.tours), cnt_days)
         data = [self.tours[i:i + cnt_tours_per_day] for i in range(0, len(self.tours), cnt_tours_per_day)]
 
-        return CFullPlanning(data)
+        return FullPlanning(data)
 
 
-class CFullPlanning:
+class FullPlanning:
     def __init__(self, data=None):
         if data:
             self.days = data
@@ -56,7 +56,7 @@ class CFullPlanning:
         return unique_tours
 
 
-class CWriter(metaclass=Singleton):
+class Writer(metaclass=Singleton):
     def __init__(self):
         pass
 
